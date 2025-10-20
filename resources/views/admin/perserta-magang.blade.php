@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -192,6 +194,38 @@
                 width: 100%;
             }
         }
+
+        .flatpickr-calendar {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+        }
+
+        .flatpickr-day {
+            color: #4a5568;
+        }
+
+        .flatpickr-day.selected {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .flatpickr-day:hover {
+            background: #dbeafe;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            color: #111827;
+        }
+
+        .flatpickr-current-month .numInputWrapper {
+            color: #111827;
+        }
+
+        .flatpickr-weekdays {
+            color: #111827;
+        }
     </style>
 </head>
 
@@ -227,8 +261,9 @@
                     <input type="email" id="editEmail" class="w-full border rounded-md px-3 py-2" />
                 </div>
                 <div class="col-span-2">
-                    <label class="block text-gray-700 mb-1">Durasi Magang</label>
-                    <input type="text" id="editDurasi" class="w-full border rounded-md px-3 py-2" />
+                    <label class="block text-gray-700 mb-1" for="editDurasi">Durasi Magang</label>
+                    <input type="text" id="editDurasi" name="editDurasi" placeholder="Pilih tanggal"
+                        class="w-full border rounded-md px-3 py-2" />
                 </div>
 
                 <!-- Bagian CV -->
@@ -328,6 +363,7 @@
                             <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-600">CARI</button>
                         </form>
                     </div>
+
                     <!-- Show Entries -->
                     <div class="flex items-center mb-6 text-sm text-gray-700 dark:text-gray-200">
                         <label class="mr-3" for="show-entries">Show</label>
@@ -952,7 +988,7 @@
                 document.getElementById("editAsal").value = cells[4].textContent.trim();
                 document.getElementById("editTelp").value = cells[5].textContent.trim();
                 document.getElementById("editEmail").value = cells[6].textContent.trim();
-                document.getElementById("editDurasi").value = cells[8].textContent.trim();
+                document.getElementById("editDurasi").value = cells[7].textContent.trim();
 
                 // Cek apakah ada link CV di kolom terakhir (misal di kolom ke-9)
                 const cvCell = cells[9];
@@ -992,6 +1028,12 @@
             alert("Perubahan data dan CV berhasil disimpan! (Simulasi)");
             modal.classList.add("hidden");
         });
+    });
+
+    flatpickr("#editDurasi", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+        defaultDate: ["10-07-2026", "10-09-2026"]
     });
 </script>
 
