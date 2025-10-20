@@ -712,13 +712,13 @@
             if (cells.length >= 7) {
                 data.push({
                     "No": index + 1,
-                    "Tanggal": cells[0].textContent.trim(),
-                    "Nama Lengkap": cells[1].textContent.trim(),
-                    "Username": cells[2].textContent.trim(),
-                    "Subjek": cells[3].textContent.trim(),
-                    "Deskripsi": cells[4].textContent.trim(),
-                    "Waktu kirim": cells[5].textContent.trim(),
-                    "Status": cells[6].textContent.trim(),
+                    "Tanggal": cells[1].textContent.trim(),
+                    "Nama Lengkap": cells[2].textContent.trim(),
+                    "Username": cells[3].textContent.trim(),
+                    "Subjek": cells[4].textContent.trim(),
+                    "Deskripsi": cells[5].textContent.trim(),
+                    "Waktu kirim": cells[6].textContent.trim(),
+                    "Status": cells[7].textContent.trim(),
                 });
             }
         });
@@ -898,6 +898,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>TANGGAL</th>
                             <th>NAMA LENGKAP</th>
                             <th>USERNAME</th>
@@ -915,6 +916,7 @@
         data.forEach(peserta => {
             htmlContent += `
                 <tr>
+                    <td>${peserta["No"]}</td>
                     <td>${peserta["Tanggal"]}</td>
                     <td>${peserta["Nama Lengkap"]}</td>
                     <td>${peserta["Username"]}</td>
@@ -963,13 +965,14 @@
 
                 const cells = row.querySelectorAll("td");
                 const data = {
-                    tanggal: cells[0].textContent.trim(),
-                    nama: cells[1].textContent.trim(),
-                    username: cells[2].textContent.trim(),
-                    subjek: cells[3].textContent.trim(),
-                    deskripsi: cells[4].textContent.trim(),
-                    waktu: cells[5].textContent.trim(),
-                    status: cells[6].textContent.trim(),
+                    no: cells[0]?.textContent.trim(),
+                    tanggal: cells[1].textContent.trim(),
+                    nama: cells[2].textContent.trim(),
+                    username: cells[3].textContent.trim(),
+                    subjek: cells[4].textContent.trim(),
+                    deskripsi: cells[5].textContent.trim(),
+                    waktu: cells[6].textContent.trim(),
+                    status: cells[7].textContent.trim(),
                 };
 
                 const printWindow = window.open('', '', 'height=700,width=800');
