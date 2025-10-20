@@ -58,6 +58,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 }; ?>
 
+<link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <style>
     html,
     body {
@@ -401,6 +404,38 @@ new #[Layout('components.layouts.auth')] class extends Component {
             font-size: 0.8rem;
         }
     }
+
+    .flatpickr-calendar {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+    }
+
+    .flatpickr-day {
+        color: #4a5568;
+    }
+
+    .flatpickr-day.selected {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .flatpickr-day:hover {
+        background: #dbeafe;
+    }
+
+    .flatpickr-months .flatpickr-month {
+        color: #111827;
+    }
+
+    .flatpickr-current-month .numInputWrapper {
+        color: #111827;
+    }
+
+    .flatpickr-weekdays {
+        color: #111827;
+    }
 </style>
 
 <div class="register-container">
@@ -457,11 +492,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 <label for="intern_period">Periode Magang</label>
                 <input type="date" id="intern_period" name="intern_period" wire:model.defer="intern_period"
                     placeholder="Masukkan Periode Magang" required style="padding-right: 45px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-calendar" viewBox="0 0 16 16">
-                    <path
-                        d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                </svg>
+
                 @error('intern_period')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
@@ -621,4 +652,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
             }
         });
     }
+
+    flatpickr("#intern_period", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+
+    });
 </script>
