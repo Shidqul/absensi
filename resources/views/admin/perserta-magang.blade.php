@@ -369,7 +369,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>NO</th>
+                                    <th>NO.</th>
                                     <th>NAMA LENGKAP</th>
                                     <th>USERNAME</th>
                                     <th>NAMA PEMBIMBING</th>
