@@ -193,9 +193,67 @@
                 width: 100%;
             }
         }
+
+        /* ✅ Perbaikan tampilan teks Deskripsi */
+        #editDeskripsi {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            line-height: 1.5;
+            text-align: left;
+            white-space: normal;
+            /* teks normal, tidak preserve spasi berlebih */
+            word-break: normal;
+            overflow-wrap: break-word;
+            /* cegah teks melebar */
+            letter-spacing: 0.01em;
+            /* spacing huruf konsisten */
+        }
+
+        #editDeskripsi:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
     </style>
 
 </head>
+
+<!-- Modal Edit Peserta -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
+    <div class="flex items-center justify-center h-full">
+        <div class="bg-white rounded-xl shadow-lg w-[750px] p-8 relative">
+            <h2 class="text-2xl font-semibold mb-6">Edit Laporan Pengajuan Izin</h2>
+
+            <form id="editForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
+                <div>
+                    <label class="block text-gray-700 mb-1">Tanggal</label>
+                    <input type="text" id="editTanggal" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Username</label>
+                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Subjek</label>
+                    <input type="text" id="editSubjek" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Deskripsi</label>
+                    <textarea id="editDeskripsi" name="deskripsi" rows="5"
+                        class="w-full border rounded-md p-2 focus:ring focus:ring-blue-200 resize-none" placeholder="Masukkan deskripsi..."></textarea>
+                </div>
+                <div class="col-span-2 flex justify-end mt-6">
+                    <button type="button" id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
     <div class="flex h-screen">
@@ -319,6 +377,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>TANGGAL</th>
                                     <th>NAMA LENGKAP</th>
                                     <th>USERNAME</th>
@@ -331,14 +390,14 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td>1.</td>
                                     <td>26/04/2026</td>
                                     <td>Ade Setiawan</td>
                                     <td>adesetiawan13</td>
                                     <td>Izin Cuti Mengurus SIM A</td>
                                     <td class="description-cell">
-                                        Selamat pagi,<br>
-                                        Saya Ade Setiawan, mahasiswa Universitas Tunggal Jaya, Divisi IT, mengajukan
-                                        izin pada hari ini dikarena...
+                                        Selamat pagi, Saya Ade Setiawan, mahasiswa Universitas Tunggal Jaya, Divisi IT,
+                                        mengajukan izin pada hari ini dikarena...
                                     </td>
                                     <td>07:06:15</td>
                                     <td><span class="status-badge">DITERIMA</span></td>
@@ -377,14 +436,14 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>2</td>
                                     <td>27/04/2026</td>
                                     <td>Bagus Putra Irwanto</td>
                                     <td>bagusputra18</td>
                                     <td>Izin Cuti Kakek Meninggal</td>
                                     <td class="description-cell">
-                                        Selamat pagi,<br>
-                                        Saya Bagus Putra Irwanto, mahasiswa Universitas Pelita, Divisi IT, mengajukan
-                                        izin pada hari ini dikarena...
+                                        Selamat pagi,Saya Bagus Putra Irwanto, mahasiswa Universitas Pelita, Divisi IT,
+                                        mengajukan izin pada hari ini dikarena...
                                     </td>
                                     <td>07:35:15</td>
                                     <td><span class="status-badge">DITERIMA</span></td>
@@ -423,14 +482,14 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>3</td>
                                     <td>29/04/2026</td>
                                     <td>Friska Dewi Gerania</td>
                                     <td>friskadewi122</td>
                                     <td>Izin Cuti Sakit</td>
                                     <td class="description-cell">
-                                        Selamat pagi,<br>
-                                        Saya Friska Dewi Gerania, mahasiswa Universitas Mawar, Divisi Keuangan,
-                                        mengajukan izin pada hari ini dikarena...
+                                        Selamat pagi,Saya Friska Dewi Gerania, mahasiswa Universitas Mawar, Divisi
+                                        Keuangan,mengajukan izin pada hari ini dikarena...
                                     </td>
                                     <td>07:18:15</td>
                                     <td><span class="status-badge">DITERIMA</span></td>
@@ -891,6 +950,7 @@
     }
 </script>
 
+<!-- Button Unduh  -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Pilih semua tombol unduh
@@ -955,5 +1015,54 @@
         });
     });
 </script>
+
+<!-- Button Edit  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll(".btn-success");
+        const modal = document.getElementById("editModal");
+        const cancelBtn = document.getElementById("cancelEdit");
+        const form = document.getElementById("editForm");
+
+        editButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const row = this.closest("tr");
+                const cells = row.querySelectorAll("td");
+
+                // Ambil teks deskripsi dan bersihkan SEMUA whitespace
+                let deskripsi = cells[5].innerText || cells[5].textContent;
+
+                // Metode pembersihan SUPER AGRESIF:
+                // 1. Split berdasarkan whitespace apapun (spasi, tab, newline)
+                // 2. Filter untuk buang string kosong
+                // 3. Join kembali dengan single space
+                deskripsi = deskripsi
+                    .split(/\s+/) // Split by any whitespace
+                    .filter(word => word) // Remove empty strings
+                    .join(' '); // Join with single space
+
+                // Isi data ke form
+                document.getElementById("editTanggal").value = cells[1].textContent.trim();
+                document.getElementById("editNama").value = cells[2].textContent.trim();
+                document.getElementById("editUsername").value = cells[3].textContent.trim();
+                document.getElementById("editSubjek").value = cells[4].textContent.trim();
+                document.getElementById("editDeskripsi").value = deskripsi;
+
+                modal.classList.remove("hidden");
+            });
+        });
+
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
+            modal.classList.add("hidden");
+        });
+    });
+</script>
+
 
 </html>
