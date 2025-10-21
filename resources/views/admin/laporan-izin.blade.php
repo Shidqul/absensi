@@ -560,53 +560,61 @@
     updateClock();
 </script>
 
-<!-- Filter  -->
+<!-- Filter Search -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const tableBody = document.querySelector("table tbody");
-        const allRows = Array.from(tableBody.querySelectorAll("tr"));
+        const table = document.querySelector("table tbody");
+        const rows = Array.from(table.querySelectorAll("tr"));
         const searchInput = document.querySelector('input[type="search"]');
-        const showSelect = document.querySelector('.w-20'); // dropdown 'Show entries'
+        const showSelect = document.getElementById("show-entries");
 
-        let filteredRows = [...allRows]; // salin semua baris untuk manipulasi
+        let currentRows = [...rows];
 
-        // 🔹 Fungsi render ulang isi tabel
+        // 🔹 Render tabel ulang
         function renderTable(data) {
-            tableBody.innerHTML = "";
-            const limit = parseInt(showSelect.value);
-            data.slice(0, limit).forEach(row => {
-                tableBody.appendChild(row);
+            table.innerHTML = "";
+            if (data.length === 0) {
+                const noDataRow = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = rows[0].children.length;
+                td.textContent = "Tidak ada data ditemukan";
+                td.classList.add("text-center", "text-gray-500");
+                noDataRow.appendChild(td);
+                table.appendChild(noDataRow);
+                return;
+            }
+
+            data.forEach((row, i) => {
+                const clone = row.cloneNode(true);
+                const firstCell = clone.querySelector("td:first-child");
+                if (firstCell) firstCell.textContent = i + 1; // update nomor urut
+                table.appendChild(clone);
             });
         }
 
-        // 🔹 Fungsi filter pencarian berdasarkan nama
-        function filterRows() {
+        // 🔹 Filter berdasarkan nama (kolom ke-2)
+        function filterTable() {
             const keyword = searchInput.value.toLowerCase();
-            filteredRows = allRows.filter(row => {
-                const nama = row.children[1].textContent.toLowerCase();
-                return nama.includes(keyword);
+            const filtered = currentRows.filter(row => {
+                const nameCell = row.children[1]; // kolom nama
+                if (!nameCell) return false;
+                return nameCell.textContent.toLowerCase().includes(keyword);
             });
-            renderTable(filteredRows);
+
+            const limit = showSelect ? parseInt(showSelect.value) : filtered.length;
+            renderTable(filtered.slice(0, limit));
         }
 
-        // 🔹 Event: ketika mengetik di kolom pencarian
-        searchInput.addEventListener("keyup", filterRows);
-
-        // 🔹 Event: ketika jumlah show entries berubah
-        showSelect.addEventListener("change", () => {
-            renderTable(filteredRows);
-        });
+        // 🔹 Event listener
+        if (showSelect) showSelect.addEventListener("change", filterTable);
+        if (searchInput) searchInput.addEventListener("keyup", filterTable);
 
         // 🔹 Render awal
-        renderTable(filteredRows);
-
-        // 🔹 Ganti halaman berdasarkan dropdown laporan
-        document.getElementById("laporanSelect").addEventListener("change", function() {
-            window.location.href = this.value;
-        });
-
+        const initialLimit = showSelect ? parseInt(showSelect.value) : currentRows.length;
+        renderTable(currentRows.slice(0, initialLimit));
     });
 </script>
+
 
 <!-- Filter Tanggal -->
 <script>
