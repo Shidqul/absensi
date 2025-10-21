@@ -12,6 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -224,27 +228,34 @@
             <h2 class="text-2xl font-semibold mb-6">Edit Laporan Pengajuan Izin</h2>
 
             <form id="editForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
+                <!-- Tanggal -->
                 <div>
                     <label class="block text-gray-700 mb-1">Tanggal</label>
-                    <input type="text" id="editTanggal" class="w-full border rounded-md px-3 py-2" />
+                    <input type="text" id="editTanggal" class="w-full border rounded-md px-3 py-2"
+                        placeholder="Pilih tanggal..." />
                 </div>
+                <!-- Nama Lengkap -->
                 <div>
                     <label class="block text-gray-700 mb-1">Nama Lengkap</label>
                     <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
                 </div>
+                <!-- Username -->
                 <div>
                     <label class="block text-gray-700 mb-1">Username</label>
                     <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
                 </div>
+                <!-- Subjek -->
                 <div>
                     <label class="block text-gray-700 mb-1">Subjek</label>
                     <input type="text" id="editSubjek" class="w-full border rounded-md px-3 py-2" />
                 </div>
+                <!-- DEskripsi -->
                 <div>
                     <label class="block text-gray-700 mb-1">Deskripsi</label>
                     <textarea id="editDeskripsi" name="deskripsi" rows="5"
                         class="w-full border rounded-md p-2 focus:ring focus:ring-blue-200 resize-none" placeholder="Masukkan deskripsi..."></textarea>
                 </div>
+                <!-- Tombol Aksi -->
                 <div class="col-span-2 flex justify-end mt-6">
                     <button type="button" id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Simpan Perubahan</button>
@@ -621,7 +632,7 @@
 
             // Filter baris berdasarkan tanggal
             const filteredRows = allRows.filter(row => {
-                const tanggalCell = row.cells[0].textContent.trim(); // Kolom TANGGAL
+                const tanggalCell = row.cells[1].textContent.trim(); // Kolom TANGGAL
                 return tanggalCell === formattedDate;
             });
 
@@ -682,6 +693,14 @@
             });
         }
 
+    });
+
+    // Inisialisasi Flatpickr untuk input tanggal edit
+    flatpickr("#editTanggal", {
+        dateFormat: "Y-m-d", // format YYYY-MM-DD
+        altInput: true,
+        altFormat: "d F Y", // contoh: 21 Oktober 2025
+        allowInput: true
     });
 </script>
 
