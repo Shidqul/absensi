@@ -560,6 +560,30 @@
     updateClock();
 </script>
 
+<!-- Dropdown pindah halaman -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const laporanSelect = document.getElementById("laporanSelect");
+        const currentPath = window.location.pathname;
+
+        if (laporanSelect) {
+            laporanSelect.addEventListener("change", function() {
+                const selectedValue = this.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue; // pindah halaman
+                }
+            });
+        }
+
+        for (const option of select.options) {
+            if (option.value === currentPath) {
+                option.selected = true;
+                break;
+            }
+        }
+    });
+</script>
+
 <!-- Filter Search -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -596,7 +620,7 @@
         function filterTable() {
             const keyword = searchInput.value.toLowerCase();
             const filtered = currentRows.filter(row => {
-                const nameCell = row.children[1]; // kolom nama
+                const nameCell = row.children[2]; // kolom nama
                 if (!nameCell) return false;
                 return nameCell.textContent.toLowerCase().includes(keyword);
             });
@@ -1091,6 +1115,12 @@
             alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
             modal.classList.add("hidden");
         });
+    });
+
+    flatpickr("#editTanggal", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+        defaultDate: ["26-04-2026"]
     });
 </script>
 
