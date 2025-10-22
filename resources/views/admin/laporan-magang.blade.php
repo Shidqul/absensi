@@ -250,10 +250,12 @@
                     <textarea id="editDeskripsi" name="deskripsi" rows="5"
                         class="w-full border rounded-md p-2 focus:ring focus:ring-blue-200 resize-none" placeholder="Masukkan deskripsi..."></textarea>
                 </div>
-                <!-- Foto Kegiatan -->
+                <!-- Upload Foto Kegiatan -->
                 <div>
                     <label class="block text-gray-700 mb-1">Foto Kegiatan</label>
-                    <input type="text" id="editFoto" class="w-full border rounded-md px-3 py-2" />
+                    <input type="file" id="editFoto" accept="image/*" class="w-full border rounded-md px-3 py-2" />
+                    <img id="previewFoto" src="" alt="Preview Foto"
+                        class="mt-3 w-32 h-32 object-cover rounded-md hidden border" />
                 </div>
                 <!-- Tombol Aksi -->
                 <div class="col-span-2 flex justify-end mt-6">
@@ -323,6 +325,7 @@
                 </div>
                 <div class="p-6">
                     <div class="flex items-center space-x-4 mb-4">
+                        <!-- Dropdown pindah halaman -->
                         <div class="relative">
                             <select id="laporanSelect"
                                 class="w-48 appearance-none bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md py-2 pl-3 pr-10 text-text-light dark:text-text-dark focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
@@ -559,6 +562,30 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
+</script>
+
+<!-- Dropdown pindah halaman -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const laporanSelect = document.getElementById("laporanSelect");
+        const currentPath = window.location.pathname;
+
+        if (laporanSelect) {
+            laporanSelect.addEventListener("change", function() {
+                const selectedValue = this.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue; // pindah halaman
+                }
+            });
+        }
+
+        for (const option of select.options) {
+            if (option.value === currentPath) {
+                option.selected = true;
+                break;
+            }
+        }
+    });
 </script>
 
 <!-- Filter Search -->
@@ -998,8 +1025,8 @@
                     tanggal: cells[1].textContent.trim(),
                     nama: cells[2].textContent.trim(),
                     username: cells[3].textContent.trim(),
-                    subjek: cells[4].textContent.trim(),
-                    deskripsi: cells[5].textContent.trim(),
+                    deskripsi: cells[4].textContent.trim(),
+                    foto: cells[5].textContent.trim(),
                     waktu: cells[6].textContent.trim(),
                     status: cells[7].textContent.trim(),
                 };
@@ -1048,5 +1075,91 @@
     });
 </script>
 
+<!-- Button Edit  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll(".btn-success");
+        const modal = document.getElementById("editModal");
+        const cancelBtn = document.getElementById("cancelEdit");
+        const form = document.getElementById("editForm");
+        const fotoInput = document.getElementById("editFoto");
+        const preview = document.getElementById("previewFoto");
+
+        // Event ketika klik tombol Edit
+        editButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const row = this.closest("tr");
+                const cells = row.querySelectorAll("td");
+
+                let deskripsi = cells[4].innerText || cells[4].textContent;
+                deskripsi = deskripsi.split(/\s+/).filter(word => word).join(' ');
+
+                // Isi form dari tabel
+                document.getElementById("editTanggal").value = cells[1].textContent.trim();
+                document.getElementById("editNama").value = cells[2].textContent.trim();
+                document.getElementById("editUsername").value = cells[3].textContent.trim();
+                document.getElementById("editDeskripsi").value = deskripsi;
+
+                // Tampilkan foto lama jika ada
+                const fotoSrc = cells[5].querySelector("img") ? cells[5].querySelector("img")
+                    .src : "";
+                if (fotoSrc) {
+                    preview.src = fotoSrc;
+                    preview.classList.remove("hidden");
+                } else {
+                    preview.src = "";
+                    preview.classList.add("hidden");
+                }
+
+                modal.classList.remove("hidden");
+            });
+        });
+
+        // Preview saat ganti foto
+        fotoInput.addEventListener("change", function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("hidden");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.classList.add("hidden");
+            }
+        });
+
+        // Tutup modal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+            preview.classList.add("hidden");
+        });
+
+        // Submit form (simulasi upload)
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            console.log("Data siap dikirim:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ':', pair[1]);
+            }
+
+            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
+            modal.classList.add("hidden");
+            form.reset();
+            preview.classList.add("hidden");
+        });
+    });
+
+    flatpickr("#editTanggal", {
+        mode: "range",
+        dateFormat: "d-m-Y",
+        defaultDate: ["02-05-2026"]
+    });
+</script>
 
 </html>
