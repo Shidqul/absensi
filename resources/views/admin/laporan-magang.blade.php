@@ -731,14 +731,6 @@
         }
 
     });
-
-    // Inisialisasi Flatpickr untuk input tanggal edit
-    flatpickr("#editTanggal", {
-        dateFormat: "Y-m-d", // format YYYY-MM-DD
-        altInput: true,
-        altFormat: "d F Y", // contoh: 21 Oktober 2025
-        allowInput: true
-    });
 </script>
 
 <!-- Export Data  -->
@@ -797,7 +789,7 @@
 
         // Tambah judul laporan di atas tabel
         XLSX.utils.sheet_add_aoa(worksheet, [
-            ["Laporan Izin - AMPEL"]
+            ["Laporan Magang - AMPEL"]
         ], {
             origin: "A1"
         });
@@ -894,7 +886,7 @@
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Data Peserta Magang</title>
+                <title>Laporan Magang</title>
                 <style>
                     body {
                         font-family: Arial, sans-serif;
@@ -950,7 +942,7 @@
                     <div class="logo">AMPEL</div>
                     <div class="subtitle">Absensi Magang Polnes</div>
                 </div>
-                <h1>Data Peserta Magang</h1>
+                <h1>Laporan Magang</h1>
                 <table>
                     <thead>
                         <tr>
@@ -1036,7 +1028,7 @@
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Data Peserta Magang</title>
+                    <title>Laporan Magang</title>
                     <style>
                         body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
                         h1 { text-align: center; color: #007BFF; margin-bottom: 30px; }
@@ -1047,7 +1039,7 @@
                     </style>
                 </head>
                 <body>
-                    <h1>Data Peserta Magang</h1>
+                    <h1>Laporan Magang</h1>
                     <table>
                         <tr><td class="label">Tanggal</td><td>${data.tanggal}</td></tr>
                         <tr><td class="label">Nama Lengkap</td><td>${data.nama}</td></tr>
