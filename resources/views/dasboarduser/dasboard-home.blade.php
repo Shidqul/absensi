@@ -54,7 +54,7 @@
                 <div class="flex items-center space-x-3">
                     <!-- Logo Pelindo kecil -->
                     <img src="{{ asset('assets/img/Logo PT Pelindo (Symbol Only).png
-                                                                                                                                                                ') }}"
+                                                                                                                                                                                    ') }}"
                         alt="Pelindo Logo" class="h-8 w-auto">
 
                     <!-- Logo AMPEL + teks -->
@@ -216,46 +216,50 @@
             </div>
         </main>
     </div>
-    <script>
-        const profileButton = document.getElementById('profile-button');
-        const profileDropdownDesktop = document.getElementById('profile-dropdown-desktop');
-        const profileDropdownMobile = document.getElementById('profile-dropdown-mobile');
-
-        // Detect if mobile or desktop
-        const isMobile = () => window.innerWidth < 768;
-
-        // Profile button toggle
-        profileButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-
-            if (isMobile()) {
-                // Toggle mobile dropdown (with navigation)
-                profileDropdownMobile.classList.toggle('hidden');
-                profileDropdownDesktop.classList.add('hidden');
-            } else {
-                // Toggle desktop dropdown (profile only)
-                profileDropdownDesktop.classList.toggle('hidden');
-                profileDropdownMobile.classList.add('hidden');
-            }
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!profileButton.contains(event.target) &&
-                !profileDropdownDesktop.contains(event.target) &&
-                !profileDropdownMobile.contains(event.target)) {
-                profileDropdownDesktop.classList.add('hidden');
-                profileDropdownMobile.classList.add('hidden');
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            profileDropdownDesktop.classList.add('hidden');
-            profileDropdownMobile.classList.add('hidden');
-        });
-    </script>
 
 </body>
+
+<!-- Dropdown combination -->
+<script>
+    const profileButton = document.getElementById('profile-button');
+    const profileDropdownDesktop = document.getElementById('profile-dropdown-desktop');
+    const profileDropdownMobile = document.getElementById('profile-dropdown-mobile');
+
+    // Detect if mobile or desktop
+    const isMobile = () => window.innerWidth < 768;
+
+    // Profile button toggle
+    profileButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        if (isMobile()) {
+            // Toggle mobile dropdown (with navigation)
+            profileDropdownMobile.classList.toggle('hidden');
+            profileDropdownDesktop.classList.add('hidden');
+        } else {
+            // Toggle desktop dropdown (profile only)
+            profileDropdownDesktop.classList.toggle('hidden');
+            profileDropdownMobile.classList.add('hidden');
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!profileButton.contains(event.target) &&
+            !profileDropdownDesktop.contains(event.target) &&
+            !profileDropdownMobile.contains(event.target)) {
+            profileDropdownDesktop.classList.add('hidden');
+            profileDropdownMobile.classList.add('hidden');
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        profileDropdownDesktop.classList.add('hidden');
+        profileDropdownMobile.classList.add('hidden');
+    });
+</script>
+
+
 
 </html>
