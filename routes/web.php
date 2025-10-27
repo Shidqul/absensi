@@ -35,6 +35,16 @@ Route::get('/dashboard', function () {
     return view('dasboarduser.dasboard-home');
 });
 
+Route::get('/absensi', function () {
+    return view('dasboarduser.absensi');
+});
+
+
+Route::get('/laporankegiatan', function () {
+    return view('dasboarduser.laporan-kegiatan');
+});
+
+
 //Route::view('dashboard', 'dashboard')
 //->middleware(['auth', 'verified'])
 //->name('dashboard');
