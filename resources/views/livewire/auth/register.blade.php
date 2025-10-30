@@ -436,6 +436,39 @@ new #[Layout('components.layouts.auth')] class extends Component {
     .flatpickr-weekdays {
         color: #111827;
     }
+
+    /* Dropdown (select) style agar sama dengan input lain */
+    .form-group select.form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #D1D5DB;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        color: #333;
+        background-color: #fff;
+        /* <- tambahkan ini agar tidak transparan */
+        outline: none;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='none' stroke='%23666' stroke-width='1.5' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 10px 6px;
+    }
+
+    /* Efek fokus agar sama dengan input */
+    .form-group select.form-control:focus {
+        border: 1.5px solid #5B8BC5;
+        box-shadow: 0 0 0 3px rgba(91, 139, 197, 0.1);
+    }
+
+    /* Placeholder option style */
+    .form-group select.form-control option[value=""] {
+        color: #9CA3AF;
+    }
 </style>
 
 <div class="register-container">
@@ -470,17 +503,32 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <div class="form-row">
             <div class="form-group">
-                <label for="school">Sekolah/ Universitas</label>
-                <input type="text" id="school" name="school" wire:model.defer="school"
-                    placeholder="Asal Sekolah atau Universitas" required>
-                @error('school')
+                <label for="education">Tingkat Pendidikan</label>
+                <select id="education" name="education" wire:model.defer="education" required class="form-control">
+                    <option value="">-- Pilih Tingkat Pendidikan --</option>
+                    <option value="SD">SD</option>
+                    <option value="SMP">SMP</option>
+                    <option value="SMA/SMK">SMA / SMK</option>
+                    <option value="D3">D3</option>
+                    <option value="S1">S1</option>
+                </select>
+                @error('education')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
-                <label for="supervisor">Nama Pembimbing</label>
-                <input type="text" id="supervisor" name="supervisor" wire:model.defer="supervisor"
-                    placeholder="Masukkan Nama Pembimbing" required>
+                <label for="school">Sekolah/Universitas</label>
+                <input type="text" id="school" name="school" value="{{ old('school') }}" required>
+                @error('school')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
+        <div class="from-row">
+            <div class="form-group">
+                <label for="supervisor">Nama Guru Pembimbing</label>
+                <input type="text" id="supervisor" name="supervisor" value="{{ old('supervisor') }}" required>
                 @error('supervisor')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
@@ -488,26 +536,48 @@ new #[Layout('components.layouts.auth')] class extends Component {
         </div>
 
         <div class="form-row">
-            <div class="form-group period-wrapper">
+            <div class="form-group" style="margin-top: 1rem;">
                 <label for="intern_period">Periode Magang</label>
-                <input type="date" id="intern_period" name="intern_period" wire:model.defer="intern_period"
-                    placeholder="Masukkan Periode Magang" required style="padding-right: 45px;">
-
+                <input type="text" id="intern_period" name="intern_period" value="{{ old('intern_period') }}"
+                    required>
                 @error('intern_period')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="form-group input-file-wrapper">
-                <label for="cv">Upload CV</label>
-                <label class="input-file-label">
-                    <svg fill="none" stroke="#6B7280" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <span id="cv-label-text">Upload CV Anda disini</span>
-                    <input type="file" id="cv" name="cv" wire:model="cv" accept=".pdf,.doc,.docx">
-                </label>
-                @error('cv')
+            <div class="form-row">
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label for="cv">Upload CV</label>
+                    <div class="input-file-wrapper">
+                        <label for="cv" class="input-file-label">
+                            <svg fill="none" stroke="#6B7280" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <span id="cv-label-text">Upload CV dan Proposal Anda di sini</span>
+                        </label>
+                        <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx">
+                    </div>
+                    @error('cv')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="from-row">
+            <div class="form-group">
+                <label for="photo">Upload Foto</label>
+                <div class="input-file-wrapper">
+                    <label for="photo" class="input-file-label">
+                        <svg fill="none" stroke="#6B7280" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <span id="photo-label-text">Upload foto Anda di sini</span>
+                    </label>
+                    <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png">
+                </div>
+                @error('photo')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
@@ -591,6 +661,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
     </div>
 </div>
 
+
+<!-- icon -->
 <script>
     // Password toggle for password
     const togglePassword = document.querySelector('#togglePassword');
@@ -652,10 +724,34 @@ new #[Layout('components.layouts.auth')] class extends Component {
             }
         });
     }
+</script>
 
-    flatpickr("#intern_period", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-
+<!-- Flatpickr -->
+<script>
+    // ✅ Inisialisasi Flatpickr agar bisa diklik dan diketik
+    document.addEventListener("DOMContentLoaded", function() {
+        flatpickr("#intern_period", {
+            mode: "range", // untuk memilih dua tanggal
+            dateFormat: "d-m-Y", // format tanggal
+            allowInput: true, // ✅ agar bisa diketik manual
+            clickOpens: true, // ✅ agar bisa diklik untuk membuka kalender
+            altInput: true, // tampilan lebih rapi
+            altFormat: "d F Y", // format tampilan yang ramah pengguna
+            locale: {
+                firstDayOfWeek: 1, // minggu dimulai dari Senin
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                }
+            }
+        });
     });
 </script>
