@@ -272,7 +272,8 @@
                     </li>
                     <!-- Data Divisi -->
                     <li class="mb-4">
-                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors" href="">
+                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
+                            href="/datadivisi">
                             <span class="material-icons mr-3">badge</span>
                             DATA DiVISI
                         </a>
@@ -286,7 +287,8 @@
                     </li>
                     <!-- Absensi -->
                     <li class="mb-4">
-                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors" href="#">
+                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
+                            href="/dataabsensi">
                             <span class="material-icons mr-3">schedule</span>
                             ABSENSI
                         </a>
@@ -318,6 +320,7 @@
                     <div class="card-header">
                         <h2 class="card-title">Data Divisi</h2>
                         <select class="dropdown">
+                            <option>Semua</option>
                             <option>Divisi IT</option>
                             <option>Divisi KEUANGAN</option>
                         </select>
