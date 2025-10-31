@@ -20,6 +20,10 @@ Route::get('/persetamagang', function () {
     return view('admin.perserta-magang');
 });
 
+Route::get('/datadivisi', function () {
+    return view('admin.data-divisi');
+});
+
 Route::get('/laporan', function () {
     return view('admin.laporan-izin');
 });
