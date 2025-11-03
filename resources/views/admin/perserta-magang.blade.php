@@ -129,6 +129,15 @@
             background: #f9f9f9;
         }
 
+        /* ✅ Tampilkan checkbox dengan gaya default */
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #007bff;
+            /* warna biru */
+            cursor: pointer;
+        }
+
         /* Kontainer tombol di kolom AKSI */
         .action-buttons {
             display: flex;
@@ -138,49 +147,54 @@
             /* Jarak antar tombol */
         }
 
-        /* Tombol umum di tabel */
+        /* ✅ Ukuran tombol aksi seragam */
         .action-buttons .btn {
+            width: 36px;
+            height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 500;
             border-radius: 6px;
-            padding: 6px 12px;
-            transition: all 0.2s ease;
-            /* teks putih */
-            color: #fff !important;
-
+            transition: 0.2s;
+            color: #fff;
+            padding: 0;
+            /* hilangkan padding agar ukuran fix */
         }
 
-        /* Ikon SVG agar sejajar dengan teks */
-        .action-buttons .btn svg {
-            margin-right: 6px;
-            vertical-align: middle;
-            /* ikon putih */
-            fill: #fff;
+        /* Warna tombol approval */
+        .action-buttons .btn-secondary {
+            background-color: #4FD283;
+            /* warna hijau */
         }
 
-        /* Warna tombol Edit (hijau) */
+
+        /* Warna tombol reject */
+        .action-buttons .btn-warning {
+            background-color: #D24F4F;
+            /* warna merah */
+        }
+
+
+        /* Warna tombol edit */
         .action-buttons .btn-success {
-            background-color: #4FD283;
-            border-color: none;
+            background-color: #ffc107;
+            /* warna kuning */
         }
 
-        .action-buttons .btn-success:hover {
-            background-color: #4FD283;
-            border-color: none;
+        /* Warna tombol preview */
+        .action-buttons .btn-info {
+            background-color: #4FBAD2;
+            /* warna blue */
         }
 
-        /* Warna tombol Unduh (biru) */
+        /* Warna tombol hapus */
         .action-buttons .btn-primary {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
+            background-color: #dc3545;
+            /* warna merah */
         }
 
-        .action-buttons .btn-primary:hover {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
+        .d-none {
+            display: none !important;
         }
 
         /* Responsive - jaga jarak tombol di layar kecil */
@@ -226,6 +240,11 @@
         .flatpickr-weekdays {
             color: #111827;
         }
+
+        /* Sembunyikan kolom Username (ke-9) dan Cv (ke-10) */
+        .hide-col {
+            display: none;
+        }
     </style>
 </head>
 
@@ -236,49 +255,62 @@
             <h2 class="text-2xl font-semibold mb-6">Edit Peserta Magang</h2>
 
             <form id="editForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
+                <!-- NAMA LENGKAP -->
                 <div>
                     <label class="block text-gray-700 mb-1">Nama Lengkap</label>
                     <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
                 </div>
-                <div>
-                    <label class="block text-gray-700 mb-1">Username</label>
-                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
-                </div>
+
+                <!-- Asal Sekolah / Universitas -->
                 <div>
                     <label class="block text-gray-700 mb-1">Asal Sekolah / Universitas</label>
                     <input type="text" id="editAsal" class="w-full border rounded-md px-3 py-2" />
                 </div>
-                <div>
-                    <label class="block text-gray-700 mb-1">Nama Pembimbing</label>
-                    <input type="text" id="editPembimbing" class="w-full border rounded-md px-3 py-2" />
-                </div>
+
+                <!-- No. Telp -->
                 <div>
                     <label class="block text-gray-700 mb-1">No. Telp</label>
                     <input type="text" id="editTelp" class="w-full border rounded-md px-3 py-2" />
                 </div>
+
+                <!-- Durasi Magang -->
                 <div>
-                    <label class="block text-gray-700 mb-1">Email</label>
-                    <input type="email" id="editEmail" class="w-full border rounded-md px-3 py-2" />
-                </div>
-                <div class="col-span-2">
                     <label class="block text-gray-700 mb-1" for="editDurasi">Durasi Magang</label>
                     <input type="text" id="editDurasi" name="editDurasi" placeholder="Pilih tanggal"
                         class="w-full border rounded-md px-3 py-2" />
                 </div>
 
-                <!-- Bagian CV -->
+                <!-- Divisi -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Divisi</label>
+                    <input type="text" id="editDivisi" class="w-full border rounded-md px-3 py-2" />
+                </div>
+
+                <!-- Nama Pembimbing -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Nama Pembimbing</label>
+                    <input type="text" id="editPembimbing" class="w-full border rounded-md px-3 py-2" />
+                </div>
+
+                <!-- Username -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Username</label>
+                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
+                </div>
+
+                <!-- Curriculum Vitae (CV) -->
                 <div class="col-span-2">
                     <label class="block text-gray-700 mb-1">Curriculum Vitae (CV)</label>
                     <div class="flex items-center gap-3">
                         <input type="file" id="editCv" accept=".pdf"
                             class="border rounded-md px-3 py-2 w-full" />
                         <a id="cvPreviewLink" href="#" target="_blank"
-                            class="text-blue-600 underline hidden">Lihat
-                            CV</a>
+                            class="text-blue-600 underline hidden">Lihat CV</a>
                     </div>
                     <small class="text-gray-500 text-sm block mt-1">Format: PDF (max 2MB)</small>
                 </div>
 
+                <!-- Tombol -->
                 <div class="col-span-2 flex justify-end mt-6">
                     <button type="button" id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Simpan Perubahan</button>
@@ -286,8 +318,8 @@
             </form>
         </div>
     </div>
-
 </div>
+
 
 
 <body class="bg-background-light dark:bg-background-dark font-display">
@@ -302,6 +334,7 @@
             </div>
             <nav class="flex-grow">
                 <ul>
+                    <!-- Dashboard -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/dashboardadmin">
@@ -309,6 +342,7 @@
                             DASHBOARD
                         </a>
                     </li>
+                    <!-- Peserta Magang -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/persetamagang">
@@ -316,12 +350,22 @@
                             PESERTA MAGANG
                         </a>
                     </li>
+                    <!-- Data Divisi -->
+                    <li class="mb-4">
+                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
+                            href="/datadivisi">
+                            <span class="material-icons mr-3">badge</span>
+                            DATA DiVISI
+                        </a>
+                    </li>
+                    <!-- Laporan -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors" href="/laporan">
                             <span class="material-icons mr-3">description</span>
                             LAPORAN
                         </a>
                     </li>
+                    <!-- Absensi -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/dataabsensi">
@@ -405,33 +449,55 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" class="checkbox" id="checkAll"></th>
                                     <th>NO.</th>
                                     <th>NAMA LENGKAP</th>
-                                    <th>USERNAME</th>
-                                    <th>NAMA PEMBIMBING</th>
                                     <th>ASAL SEKOLAH/UNIVERSITAS</th>
                                     <th>NO TELP</th>
-                                    <th>EMAIL</th>
                                     <th>DURASI MAGANG</th>
-                                    <th>CV</th>
-                                    <th>AKSI</th>
+                                    <th>DIVISI</th>
+                                    <th>NAMA PEMBIMBING LAPANGAN</th>
+                                    <th class="hide-col">Username</th>
+                                    <th class="hide-col">Cv</th>
+                                    <th class="text-center">AKSI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>1</td>
                                     <td>Ade Setiawan</td>
-                                    <td>adestwn13</td>
-                                    <td>Budi Sutanto, S.Kom., M.T.</td>
                                     <td>Universitas Tunggal Jaya</td>
                                     <td>081244025567</td>
-                                    <td>adesetiawan54@gmail.com</td>
                                     <td>10-07-2026 - 10-09-2026</td>
-                                    <td>CV-Ade Setiawan.pdf</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td class="hide-col">ade123</td>
+                                    <td class="hide-col"><a href="">Lihat CV</a></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
+                                            <!-- Tombol approval -->
+                                            <button type="button" class="btn btn-secondary btn-approval">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="m5 13l4 4L19 7" />
+                                                </svg>
+                                            </button>
+
+                                            <!-- Tombol reject -->
+                                            <button type="button" class="btn btn-warning btn-reject">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M6.758 17.243L12.001 12m5.243-5.243L12 12m0 0L6.758 6.757M12.001 12l5.243 5.243" />
+                                                </svg>
+                                            </button>
+
                                             <!-- Tombol Edit -->
-                                            <button type="button" class="btn btn-success">
+                                            <button type="button" class="btn btn-success btn-hidden d-none">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square me-1"
                                                     viewBox="0 0 16 16">
@@ -442,36 +508,41 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol Eyes -->
+                                            <button type="button" class="btn btn-info btn-hidden d-none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="currentColor" fill-rule="evenodd"
+                                                        d="M12 17.8c4.034 0 7.686-2.25 9.648-5.8C19.686 8.45 16.034 6.2 12 6.2S4.314 8.45 2.352 12c1.962 3.55 5.614 5.8 9.648 5.8M12 5c4.808 0 8.972 2.848 11 7c-2.028 4.152-6.192 7-11 7s-8.972-2.848-11-7c2.028-4.152 6.192-7 11-7m0 9.8a2.8 2.8 0 1 0 0-5.6a2.8 2.8 0 0 0 0 5.6m0 1.2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
                                                 </svg>
-                                                Unduh
+                                            </button>
+
+                                            <!-- Tombol Discard -->
+                                            <button type="button"
+                                                class="btn btn-primary btn-hidden btn-unduh d-none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>2</td>
                                     <td>Bobby Mahendra</td>
-                                    <td>bobbymhndr122</td>
-                                    <td>Rudi Affandi, S.I., M.T.</td>
                                     <td>Universitas Makmur</td>
                                     <td>081944527644</td>
-                                    <td>bobbymh23@gmail.com</td>
                                     <td>15-07-2026 - 15-09-2026</td>
-                                    <td>CV-Bobby Mahendra.pdf</td>
+                                    <td>Teknologi & Informasi</td>
+                                    <td>Rudi Affandi, S.Kom., M.T.</td>
+                                    <td class="hide-col">boby123</td>
+                                    <td class="hide-col"><a href="">Lihat CV</a></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol Edit -->
@@ -486,36 +557,40 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol Eyes -->
+                                            <button type="button" class="btn btn-info">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="currentColor" fill-rule="evenodd"
+                                                        d="M12 17.8c4.034 0 7.686-2.25 9.648-5.8C19.686 8.45 16.034 6.2 12 6.2S4.314 8.45 2.352 12c1.962 3.55 5.614 5.8 9.648 5.8M12 5c4.808 0 8.972 2.848 11 7c-2.028 4.152-6.192 7-11 7s-8.972-2.848-11-7c2.028-4.152 6.192-7 11-7m0 9.8a2.8 2.8 0 1 0 0-5.6a2.8 2.8 0 0 0 0 5.6m0 1.2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
                                                 </svg>
-                                                Unduh
+                                            </button>
+
+                                            <!-- Tombol Discard -->
+                                            <button type="button" class="btn btn-primary btn-unduh">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>3</td>
                                     <td>Deni Saputra</td>
-                                    <td>denisptr119</td>
-                                    <td>Prasetyo, S.I., M.T.</td>
                                     <td>Universitas Kampiun</td>
                                     <td>085733216577</td>
-                                    <td>denissptr30@gmail.com</td>
                                     <td>12-07-2026 - 12-09-2026</td>
-                                    <td>CV-Deni Saputra.pdf</td>
+                                    <td>Keuangan</td>
+                                    <td>Prasetyo, S.E., M.M.</td>
+                                    <td class="hide-col">deni123</td>
+                                    <td class="hide-col"><a href="">Lihat CV</a></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol Edit -->
@@ -530,22 +605,25 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol Eyes -->
+                                            <button type="button" class="btn btn-info">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="currentColor" fill-rule="evenodd"
+                                                        d="M12 17.8c4.034 0 7.686-2.25 9.648-5.8C19.686 8.45 16.034 6.2 12 6.2S4.314 8.45 2.352 12c1.962 3.55 5.614 5.8 9.648 5.8M12 5c4.808 0 8.972 2.848 11 7c-2.028 4.152-6.192 7-11 7s-8.972-2.848-11-7c2.028-4.152 6.192-7 11-7m0 9.8a2.8 2.8 0 1 0 0-5.6a2.8 2.8 0 0 0 0 5.6m0 1.2a4 4 0 1 1 0-8a4 4 0 0 1 0 8" />
                                                 </svg>
-                                                Unduh
+                                            </button>
+
+                                            <!-- Tombol Discard -->
+                                            <button type="button" class="btn btn-primary btn-unduh">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </td>
@@ -579,64 +657,129 @@
         const rows = Array.from(table.querySelectorAll("tr"));
         const searchInput = document.querySelector('input[type="search"]');
         const showSelect = document.getElementById("show-entries");
-        const sortSelect = document.querySelector('select.w-48'); // select untuk urutkan
+        const sortSelect = document.querySelector('select.w-48'); // dropdown "Urutkan Sesuai"
 
-        let currentRows = [...rows]; // simpan data awal
+        let currentRows = [...rows]; // data asli tabel
 
         // 🔹 Fungsi render ulang tabel
         function renderTable(data) {
             table.innerHTML = "";
             data.forEach((row, i) => {
                 const clone = row.cloneNode(true);
-                clone.querySelector("td:first-child").textContent = i + 1; // update nomor urut
+                // Kolom nomor urut ada di kolom ke-2 (setelah checkbox)
+                clone.querySelectorAll("td")[1].textContent = i + 1;
                 table.appendChild(clone);
             });
         }
 
-        // 🔹 Fungsi cari nama
+        // 🔹 Fungsi pencarian nama
         function filterTable() {
-            const keyword = searchInput.value.toLowerCase();
+            const keyword = searchInput ? searchInput.value.toLowerCase() : "";
             const filtered = currentRows.filter(row =>
-                row.children[1].textContent.toLowerCase().includes(keyword)
+                row.children[2].textContent.toLowerCase().includes(keyword)
             );
-            renderTable(filtered.slice(0, showSelect.value));
+            renderTable(filtered.slice(0, showSelect ? showSelect.value : filtered.length));
         }
 
-        // 🔹 Fungsi urutkan abjad
-        sortSelect.addEventListener("change", () => {
-            const selected = sortSelect.value;
-            let sorted = [...currentRows];
-            if (selected === "A-Z") {
-                sorted.sort((a, b) =>
-                    a.children[1].textContent.localeCompare(b.children[1].textContent)
-                );
-            } else if (selected === "Z-A") {
-                sorted.sort((a, b) =>
-                    b.children[1].textContent.localeCompare(a.children[1].textContent)
-                );
-            }
-            currentRows = sorted;
-            filterTable();
-        });
+        // 🔹 Isi opsi urutan lengkap
+        if (sortSelect) {
+            sortSelect.innerHTML = `
+            <option value="name-asc">Nama (A - Z)</option>
+            <option value="name-desc">Nama (Z - A)</option>
+            <option value="school-asc">Asal Sekolah (A - Z)</option>
+            <option value="school-desc">Asal Sekolah (Z - A)</option>
+        `;
+        }
+
+        // 🔹 Fungsi urutkan tabel
+        if (sortSelect) {
+            sortSelect.addEventListener("change", () => {
+                const selected = sortSelect.value;
+                let sorted = [...rows];
+
+                if (selected === "name-asc") {
+                    sorted.sort((a, b) =>
+                        a.children[2].textContent.localeCompare(b.children[2].textContent)
+                    );
+                } else if (selected === "name-desc") {
+                    sorted.sort((a, b) =>
+                        b.children[2].textContent.localeCompare(a.children[2].textContent)
+                    );
+                } else if (selected === "school-asc") {
+                    sorted.sort((a, b) =>
+                        a.children[3].textContent.localeCompare(b.children[3].textContent)
+                    );
+                } else if (selected === "school-desc") {
+                    sorted.sort((a, b) =>
+                        b.children[3].textContent.localeCompare(a.children[3].textContent)
+                    );
+                }
+
+                currentRows = sorted;
+                filterTable();
+            });
+        }
 
         // 🔹 Fungsi ubah jumlah tampilan (show entries)
-        showSelect.addEventListener("change", filterTable);
+        if (showSelect) {
+            showSelect.addEventListener("change", filterTable);
+        }
 
         // 🔹 Fungsi pencarian realtime
-        searchInput.addEventListener("keyup", filterTable);
+        if (searchInput) {
+            searchInput.addEventListener("keyup", filterTable);
+        }
 
-        // 🔹 Isi opsi urutan (A-Z / Z-A)
-        sortSelect.innerHTML = `
-        <option value="A-Z">A - Z</option>
-        <option value="Z-A">Z - A</option>
-    `;
-
-        // 🔹 Render awal
-        renderTable(currentRows.slice(0, showSelect.value));
+        // 🔹 Render awal tabel
+        renderTable(currentRows.slice(0, showSelect ? showSelect.value : currentRows.length));
     });
 </script>
 
-<!-- Export data  -->
+
+<!-- checkbox -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkAll = document.getElementById('checkAll');
+        const table = document.querySelector('table');
+
+        if (!checkAll || !table) return;
+
+        // 🔹 Fungsi ambil ulang semua checkbox baris yang ada saat ini
+        function getRowCheckboxes() {
+            return table.querySelectorAll('.row-checkbox');
+        }
+
+        // 🔹 Saat checkbox utama di header diubah
+        checkAll.addEventListener('change', function() {
+            const rowCheckboxes = getRowCheckboxes();
+            rowCheckboxes.forEach(cb => cb.checked = this.checked);
+            checkAll.indeterminate = false;
+        });
+
+        // 🔹 Delegasi event untuk mendeteksi perubahan di checkbox baris
+        table.addEventListener('change', function(e) {
+            if (!e.target.classList.contains('row-checkbox')) return;
+
+            const rowCheckboxes = getRowCheckboxes();
+            const total = rowCheckboxes.length;
+            const checked = Array.from(rowCheckboxes).filter(c => c.checked).length;
+
+            if (checked === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checked === total) {
+                checkAll.checked = true;
+                checkAll.indeterminate = false;
+            } else {
+                checkAll.checked = false;
+                checkAll.indeterminate = true;
+            }
+        });
+    });
+</script>
+
+
+<!-- Export data berdasarkan checkbox -->
 <script>
     // Toggle Export Dropdown
     const exportBtn = document.getElementById('exportBtn');
@@ -648,137 +791,67 @@
             exportDropdown.classList.toggle('show');
         });
 
-        // Close dropdown when clicking outside
+        // Tutup dropdown jika klik di luar
         document.addEventListener('click', function() {
             exportDropdown.classList.remove('show');
         });
     }
 
-    // Ambil data dari tabel HTML
-    function getTableData() {
-        const rows = document.querySelectorAll("tbody tr");
+    // 🔹 Ambil data dari baris yang dicentang
+    function getCheckedRowsData() {
+        const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
         const data = [];
-        rows.forEach((row, index) => {
-            const cells = row.querySelectorAll("td");
-            if (cells.length >= 7) {
+        checkedBoxes.forEach((checkbox, index) => {
+            const row = checkbox.closest('tr');
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 8) {
                 data.push({
-                    "No": index + 1,
-                    "Nama Lengkap": cells[1].textContent.trim(),
-                    "Username": cells[2].textContent.trim(),
-                    "Asal Sekolah/Universitas": cells[3].textContent.trim(),
-                    "No Telp": cells[4].textContent.trim(),
-                    "Email": cells[5].textContent.trim(),
-                    "Durasi Magang": cells[6].textContent.trim(),
+                    "NO.": index + 1,
+                    "NAMA LENGKAP": cells[2].textContent.trim(),
+                    "ASAL SEKOLAH/UNIVERSITAS": cells[3].textContent.trim(),
+                    "NO TELP": cells[4].textContent.trim(),
+                    "DURASI MAGANG": cells[5].textContent.trim(),
+                    "DIVISI": cells[6].textContent.trim(),
+                    "NAMA PEMBIMBING LAPANGAN": cells[7].textContent.trim(),
                 });
             }
         });
         return data;
     }
 
-    // ✅ Export ke Excel (versi rapi)
+    // ✅ Export ke Excel (berdasarkan checkbox)
     function exportToExcel() {
-        const data = getTableData();
+        const data = getCheckedRowsData();
         if (data.length === 0) {
-            alert("Tidak ada data untuk diexport!");
+            alert("Silakan pilih minimal satu data dengan mencentang checkbox!");
             return;
         }
 
-        const worksheet = XLSX.utils.json_to_sheet(data, {
-            origin: "A2"
-        });
+        const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
 
-        // Tambah judul laporan di baris pertama
+        // Tambahkan judul di atas tabel
         XLSX.utils.sheet_add_aoa(worksheet, [
             ["Laporan Data Peserta Magang - AMPEL"]
         ], {
             origin: "A1"
         });
 
-        // Tambah header manual supaya tebal
+        // Auto width kolom
         const header = Object.keys(data[0]);
-        XLSX.utils.sheet_add_aoa(worksheet, [header], {
-            origin: "A2"
-        });
+        worksheet['!cols'] = header.map(h => ({
+            wch: Math.max(h.length + 2, ...data.map(d => (d[h]?.length || 0))) + 2
+        }));
 
-        // ✅ Auto width kolom
-        const columnWidths = header.map(h => {
-            const maxLength = Math.max(
-                h.length,
-                ...data.map(d => d[h]?.toString().length || 0)
-            );
-            return {
-                wch: maxLength + 3
-            }; // padding
-        });
-        worksheet['!cols'] = columnWidths;
-
-        // ✅ Styling border & header bold
-        const range = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let R = range.s.r; R <= range.e.r; ++R) {
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                const cellRef = XLSX.utils.encode_cell({
-                    r: R,
-                    c: C
-                });
-                if (!worksheet[cellRef]) continue;
-                worksheet[cellRef].s = {
-                    border: {
-                        top: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        bottom: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        left: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        right: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                    },
-                    alignment: {
-                        vertical: "center",
-                        horizontal: "left",
-                        wrapText: true
-                    },
-                };
-
-                // Header row (A2) → Bold + background
-                if (R === 1) {
-                    worksheet[cellRef].s.font = {
-                        bold: true
-                    };
-                    worksheet[cellRef].s.fill = {
-                        fgColor: {
-                            rgb: "DCE6F1"
-                        }
-                    };
-                }
-            }
-        }
-
-        // ✅ Simpan file Excel
         XLSX.utils.book_append_sheet(workbook, worksheet, "Peserta Magang");
         XLSX.writeFile(workbook, "Data_Peserta_Magang.xlsx");
     }
-    // Export ke PDF (Perbaikan utama)
+
+    // ✅ Export ke PDF (berdasarkan checkbox)
     function exportToPDF() {
-        const data = getTableData();
+        const data = getCheckedRowsData();
         if (data.length === 0) {
-            alert("Tidak ada data untuk diexport!");
+            alert("Silakan pilih minimal satu data dengan mencentang checkbox!");
             return;
         }
 
@@ -802,11 +875,6 @@
                         font-size: 28px;
                         font-weight: bold;
                         color: #039BE5;
-                        margin-bottom: 5px;
-                    }
-                    .subtitle {
-                        color: #666;
-                        font-size: 14px;
                     }
                     h1 {
                         text-align: center;
@@ -842,35 +910,34 @@
             <body>
                 <div class="header">
                     <div class="logo">AMPEL</div>
-                    <div class="subtitle">Absensi Magang Polnes</div>
+                    <div class="subtitle">Absensi Magang Pelindo</div>
                 </div>
                 <h1>Data Peserta Magang</h1>
                 <table>
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama Lengkap</th>
-                            <th>Username</th>
-                            <th>Asal Sekolah/Universitas</th>
-                            <th>No Telp</th>
-                            <th>Email</th>
-                            <th>Durasi Magang</th>
+                            <th>NO.</th>
+                            <th>NAMA LENGKAP</th>
+                            <th>ASAL SEKOLAH/UNIVERSITAS</th>
+                            <th>NO TELP</th>
+                            <th>DURASI MAGANG</th>
+                            <th>DIVISI</th>
+                            <th>NAMA PEMBIMBING LAPANGAN</th>
                         </tr>
                     </thead>
                     <tbody>
         `;
 
-        // ✅ Perbaikan mapping kolom agar sesuai dengan data
-        data.forEach(peserta => {
+        data.forEach(item => {
             htmlContent += `
                 <tr>
-                    <td>${peserta["No"]}</td>
-                    <td>${peserta["Nama Lengkap"]}</td>
-                    <td>${peserta["Username"]}</td>
-                    <td>${peserta["Asal Sekolah/Universitas"]}</td>
-                    <td>${peserta["No Telp"]}</td>
-                    <td>${peserta["Email"]}</td>
-                    <td>${peserta["Durasi Magang"]}</td>
+                    <td>${item["NO."]}</td>
+                    <td>${item["NAMA LENGKAP"]}</td>
+                    <td>${item["ASAL SEKOLAH/UNIVERSITAS"]}</td>
+                    <td>${item["NO TELP"]}</td>
+                    <td>${item["DURASI MAGANG"]}</td>
+                    <td>${item["DIVISI"]}</td>
+                    <td>${item["NAMA PEMBIMBING LAPANGAN"]}</td>
                 </tr>
             `;
         });
@@ -890,81 +957,13 @@
 
         printWindow.onload = function() {
             printWindow.print();
-            setTimeout(() => {
-                printWindow.close();
-            }, 300);
+            setTimeout(() => printWindow.close(), 300);
         };
 
         exportDropdown.classList.remove('show');
     }
 </script>
 
-<!-- Button unduh  -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Pilih semua tombol unduh
-        const unduhButtons = document.querySelectorAll("button.btn-unduh");
-
-        unduhButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                if (!row) return;
-
-                const cells = row.querySelectorAll("td");
-                const data = {
-                    no: cells[0]?.textContent.trim(),
-                    nama: cells[1]?.textContent.trim(),
-                    username: cells[2]?.textContent.trim(),
-                    pembimbing: cells[3]?.textContent.trim(),
-                    asal: cells[4]?.textContent.trim(),
-                    telp: cells[5]?.textContent.trim(),
-                    email: cells[6]?.textContent.trim(),
-                    durasi: cells[7]?.textContent.trim(),
-                };
-
-                const printWindow = window.open('', '', 'height=700,width=800');
-                printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Data Peserta Magang</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-                        h1 { text-align: center; color: #007BFF; margin-bottom: 30px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        td { padding: 10px; border: 1px solid #ccc; font-size: 13px; }
-                        .label { background: #007BFF; color: #fff; width: 35%; font-weight: bold; }
-                        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #777; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Data Peserta Magang</h1>
-                    <table>
-                        <tr><td class="label">Nama Lengkap</td><td>${data.nama}</td></tr>
-                        <tr><td class="label">Username</td><td>${data.username}</td></tr>
-                        <tr><td class="label">Nama Pembimbing</td><td>${data.pembimbing}</td></tr>
-                        <tr><td class="label">Asal Sekolah/Universitas</td><td>${data.asal}</td></tr>
-                        <tr><td class="label">No Telp</td><td>${data.telp}</td></tr>
-                        <tr><td class="label">Email</td><td>${data.email}</td></tr>
-                        <tr><td class="label">Durasi Magang</td><td>${data.durasi}</td></tr>
-                    </table>
-                    <div class="footer">
-                        Dicetak pada: ${new Date().toLocaleString('id-ID')} <br>
-                        © AMPEL - Absensi Magang Polnes
-                    </div>
-                </body>
-                </html>
-            `);
-
-                printWindow.document.close();
-                printWindow.onload = function() {
-                    printWindow.print();
-                    setTimeout(() => printWindow.close(), 500);
-                };
-            });
-        });
-    });
-</script>
 
 <!-- Button edit -->
 <script>
@@ -979,22 +978,33 @@
         editButtons.forEach(button => {
             button.addEventListener("click", function() {
                 const row = this.closest("tr");
-                const cells = row.querySelectorAll("td");
 
-                // Ambil data dari tabel
-                document.getElementById("editNama").value = cells[1].textContent.trim();
-                document.getElementById("editUsername").value = cells[2].textContent.trim();
-                document.getElementById("editPembimbing").value = cells[3].textContent.trim();
-                document.getElementById("editAsal").value = cells[4].textContent.trim();
-                document.getElementById("editTelp").value = cells[5].textContent.trim();
-                document.getElementById("editEmail").value = cells[6].textContent.trim();
-                document.getElementById("editDurasi").value = cells[7].textContent.trim();
+                // Ambil data dari kolom tabel (urutan menyesuaikan tabel kamu)
+                const nama = row.querySelector("td:nth-child(3)")?.textContent.trim() || "";
+                const asal = row.querySelector("td:nth-child(4)")?.textContent.trim() || "";
+                const telp = row.querySelector("td:nth-child(5)")?.textContent.trim() || "";
+                const durasi = row.querySelector("td:nth-child(6)")?.textContent.trim() || "";
+                const divisi = row.querySelector("td:nth-child(7)")?.textContent.trim() || "";
+                const pembimbing = row.querySelector("td:nth-child(8)")?.textContent.trim() ||
+                    "";
+                const username = row.querySelector("td.hide-col.username")?.textContent
+                    .trim() || "";
+                const cvCell = row.querySelector("td.hide-col.cv");
 
-                // Cek apakah ada link CV di kolom terakhir (misal di kolom ke-9)
-                const cvCell = cells[9];
+                // Isi nilai ke form modal
+                document.getElementById("editNama").value = nama;
+                document.getElementById("editAsal").value = asal;
+                document.getElementById("editTelp").value = telp;
+                document.getElementById("editDurasi").value = durasi;
+                document.getElementById("editDivisi").value = divisi;
+                document.getElementById("editPembimbing").value = pembimbing;
+                document.getElementById("editUsername").value = username;
+
+                // Tampilkan link CV lama jika ada
                 if (cvCell && cvCell.querySelector("a")) {
                     const cvUrl = cvCell.querySelector("a").getAttribute("href");
                     cvLink.href = cvUrl;
+                    cvLink.textContent = "Lihat CV Lama";
                     cvLink.classList.remove("hidden");
                 } else {
                     cvLink.classList.add("hidden");
@@ -1004,13 +1014,14 @@
             });
         });
 
+        // Tombol batal
         cancelBtn.addEventListener("click", () => {
             modal.classList.add("hidden");
             form.reset();
             cvLink.classList.add("hidden");
         });
 
-        // Preview file CV baru (belum upload ke server)
+        // Preview CV baru (PDF)
         cvInput.addEventListener("change", function() {
             const file = this.files[0];
             if (file && file.type === "application/pdf") {
@@ -1023,20 +1034,64 @@
             }
         });
 
+        // Simpan (sementara masih simulasi)
         form.addEventListener("submit", function(e) {
             e.preventDefault();
-            alert("Perubahan data dan CV berhasil disimpan! (Simulasi)");
+            alert("Perubahan data berhasil disimpan! (Simulasi)");
             modal.classList.add("hidden");
         });
     });
 
-    flatpickr("#editDurasi", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-        defaultDate: ["10-07-2026", "10-09-2026"]
+    // ✅ Inisialisasi Flatpickr agar bisa diklik dan diketik
+    document.addEventListener("DOMContentLoaded", function() {
+        flatpickr("#editDurasi", {
+            mode: "range", // untuk memilih dua tanggal
+            dateFormat: "d-m-Y", // format tanggal
+            allowInput: true, // ✅ agar bisa diketik manual
+            clickOpens: true, // ✅ agar bisa diklik untuk membuka kalender
+            altInput: true, // tampilan lebih rapi
+            altFormat: "d F Y", // format tampilan yang ramah pengguna
+            locale: {
+                firstDayOfWeek: 1, // minggu dimulai dari Senin
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                }
+            }
+        });
     });
 </script>
 
+<!-- Button Hidden  -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil semua tombol approval di tabel
+        const approvalButtons = document.querySelectorAll('.btn-approval');
+
+        approvalButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const actionContainer = this.closest('.action-buttons');
+                const hiddenButtons = actionContainer.querySelectorAll('.btn-hidden');
+
+                // Tampilkan tombol yang disembunyikan
+                hiddenButtons.forEach(b => b.classList.remove('d-none'));
+
+                // Sembunyikan tombol approval & reject
+                const rejectBtn = actionContainer.querySelector('.btn-reject');
+                btn.classList.add('d-none');
+                if (rejectBtn) rejectBtn.classList.add('d-none');
+            });
+        });
+    });
+</script>
 
 
 </html>
