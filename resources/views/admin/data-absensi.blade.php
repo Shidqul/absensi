@@ -276,6 +276,7 @@
             </div>
             <nav class="flex-grow">
                 <ul>
+                    <!-- Dashboard -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/dashboardadmin">
@@ -283,6 +284,7 @@
                             DASHBOARD
                         </a>
                     </li>
+                    <!-- Peserta Magang -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/persetamagang">
@@ -290,12 +292,22 @@
                             PESERTA MAGANG
                         </a>
                     </li>
+                    <!-- Data Divisi -->
+                    <li class="mb-4">
+                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
+                            href="/datadivisi">
+                            <span class="material-icons mr-3">badge</span>
+                            DATA DiVISI
+                        </a>
+                    </li>
+                    <!-- Laporan -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors" href="/laporan">
                             <span class="material-icons mr-3">description</span>
                             LAPORAN
                         </a>
                     </li>
+                    <!-- Absensi -->
                     <li class="mb-4">
                         <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
                             href="/dataabsensi">
