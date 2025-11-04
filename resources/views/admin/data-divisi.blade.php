@@ -172,6 +172,44 @@
     </style>
 </head>
 
+<!-- Modal Tambah -->
+<div id="tambahModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
+    <div class="flex items-center justify-center h-full">
+        <div class="bg-white rounded-xl shadow-lg w-[750px] p-8 relative">
+            <h2 class="text-2xl font-semibold mb-6">Tambah Divisi</h2>
+
+            <form id="tambahForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
+                <!-- NAMA PEMBIMBING LAPANGAN -->
+                <div>
+                    <label class="block text-gray-700 mb-1">NAMA PEMBIMBING LAPANGAN</label>
+                    <input type="text" id="tambahNama" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <!-- Divisi -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Divisi</label>
+                    <input type="text" id="tambahDivisi" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <!-- No. Telp -->
+                <div>
+                    <label class="block text-gray-700 mb-1">No. Telp</label>
+                    <input type="text" id="tambahTelp" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <!-- Nip -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Nip</label>
+                    <input type="text" id="tambahNip" class="w-full border rounded-md px-3 py-2" />
+                </div>
+                <!-- Tombol Aksi -->
+                <div class="col-span-2 flex justify-end mt-6">
+                    <button type="button" id="cancelTambah"
+                        class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Edit Peserta -->
 <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
     <div class="flex items-center justify-center h-full">
@@ -179,36 +217,27 @@
             <h2 class="text-2xl font-semibold mb-6">Edit Divisi</h2>
 
             <form id="editForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
+                <!-- NAMA PEMBIMBING LAPANGAN -->
                 <div>
-                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
+                    <label class="block text-gray-700 mb-1">NAMA PEMBIMBING LAPANGAN</label>
                     <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
                 </div>
+                <!-- Divisi -->
                 <div>
-                    <label class="block text-gray-700 mb-1">Username</label>
-                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
+                    <label class="block text-gray-700 mb-1">Divisi</label>
+                    <input type="text" id="editDivisi" class="w-full border rounded-md px-3 py-2" />
                 </div>
-                <div>
-                    <label class="block text-gray-700 mb-1">Asal Sekolah / Universitas</label>
-                    <input type="text" id="editAsal" class="w-full border rounded-md px-3 py-2" />
-                </div>
-                <div>
-                    <label class="block text-gray-700 mb-1">Nama Pembimbing</label>
-                    <input type="text" id="editPembimbing" class="w-full border rounded-md px-3 py-2" />
-                </div>
+                <!-- No. Telp -->
                 <div>
                     <label class="block text-gray-700 mb-1">No. Telp</label>
                     <input type="text" id="editTelp" class="w-full border rounded-md px-3 py-2" />
                 </div>
+                <!-- Nip -->
                 <div>
-                    <label class="block text-gray-700 mb-1">Email</label>
-                    <input type="email" id="editEmail" class="w-full border rounded-md px-3 py-2" />
+                    <label class="block text-gray-700 mb-1">Nip</label>
+                    <input type="text" id="editNip" class="w-full border rounded-md px-3 py-2" />
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 mb-1" for="editDurasi">Durasi Magang</label>
-                    <input type="text" id="editDurasi" name="editDurasi" placeholder="Pilih tanggal"
-                        class="w-full border rounded-md px-3 py-2" />
-                </div>
-
+                <!-- Tombol Aksi -->
                 <div class="col-span-2 flex justify-end mt-6">
                     <button type="button" id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Simpan Perubahan</button>
@@ -216,7 +245,6 @@
             </form>
         </div>
     </div>
-
 </div>
 
 
@@ -331,13 +359,12 @@
                     <div class="export-container">
                         <!-- Tombol tambah -->
                         <div class="export-container">
-                            <button
-                                class="add-button flex items-center gap-2 bg-[#4a58ad] text-white px-4 py-2 rounded-md hover:bg-[#3a4793] transition">
+                            <button id="btnTambah"
+                                class="flex items-center gap-2 bg-[#4a58ad] text-white px-4 py-2 rounded-md hover:bg-[#3a4793] transition">
                                 <i class="material-icons text-white text-base">add</i>
                                 Tambah
                             </button>
                         </div>
-
                     </div>
 
 
@@ -348,7 +375,7 @@
                                 <tr>
                                     <th><input type="checkbox" class="checkbox" id="checkAll"></th>
                                     <th>NO</th>
-                                    <th>NAMA LENGKAP</th>
+                                    <th>NAMA PEMBIMBING LAPANGAN</th>
                                     <th>DIVISI</th>
                                     <th>NO TELP</th>
                                     <th>NIP</th>
@@ -607,7 +634,91 @@
     });
 </script>
 
+<!-- Button Edit  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editButtons = document.querySelectorAll(".btn-success");
+        const modal = document.getElementById("editModal");
+        const cancelBtn = document.getElementById("cancelEdit");
+        const form = document.getElementById("editForm");
+
+        // Event ketika klik tombol Edit
+        editButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const row = this.closest("tr");
+                const cells = row.querySelectorAll("td");
 
 
+                // Isi form dari tabel
+                document.getElementById("editNama").value = cells[2].textContent.trim();
+                document.getElementById("editDivisi").value = cells[3].textContent.trim();
+                document.getElementById("editTelp").value = cells[4].textContent.trim();
+                document.getElementById("editNip").value = cells[5].textContent.trim();
+
+                modal.classList.remove("hidden");
+            });
+        });
+
+
+        // Tutup modal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+            preview.classList.add("hidden");
+        });
+
+        // Submit form (simulasi upload)
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            console.log("Data siap dikirim:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ':', pair[1]);
+            }
+
+            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
+            modal.classList.add("hidden");
+            form.reset();
+            preview.classList.add("hidden");
+        });
+    });
+</script>
+
+<!-- Button tambah  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const btnTambah = document.getElementById("btnTambah");
+        const modal = document.getElementById("tambahModal");
+        const cancelBtn = document.getElementById("cancelTambah");
+        const form = document.getElementById("tambahForm");
+
+        // Tampilkan modal saat tombol Tambah diklik
+        btnTambah.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        // Tutup modal saat klik batal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+        });
+
+        // Saat submit form
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            console.log("Data yang dikirim:");
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+
+            alert("Data berhasil ditambahkan (simulasi kirim ke backend).");
+            modal.classList.add("hidden");
+            form.reset();
+        });
+    });
+</script>
 
 </html>
