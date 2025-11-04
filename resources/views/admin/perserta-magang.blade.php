@@ -469,7 +469,8 @@
                                     <td>Ade Setiawan</td>
                                     <td>Universitas Tunggal Jaya</td>
                                     <td>081244025567</td>
-                                    <td>10-07-2026 - 10-09-2026</td>
+                                    <td>18 Juni 2026 -
+                                        18 September 2026</td>
                                     <td>-</td>
                                     <td>-</td>
                                     <td class="hide-col">ade123</td>
@@ -538,7 +539,8 @@
                                     <td>Bobby Mahendra</td>
                                     <td>Universitas Makmur</td>
                                     <td>081944527644</td>
-                                    <td>15-07-2026 - 15-09-2026</td>
+                                    <td>18 Juni 2026 -
+                                        18 September 2026</td>
                                     <td>Teknologi & Informasi</td>
                                     <td>Rudi Affandi, S.Kom., M.T.</td>
                                     <td class="hide-col">boby123</td>
@@ -586,7 +588,8 @@
                                     <td>Deni Saputra</td>
                                     <td>Universitas Kampiun</td>
                                     <td>085733216577</td>
-                                    <td>12-07-2026 - 12-09-2026</td>
+                                    <td>12 April 2026 -
+                                        12 Juli 2026</td>
                                     <td>Keuangan</td>
                                     <td>Prasetyo, S.E., M.M.</td>
                                     <td class="hide-col">deni123</td>
@@ -827,22 +830,55 @@
             return;
         }
 
-        const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
 
-        // Tambahkan judul di atas tabel
-        XLSX.utils.sheet_add_aoa(worksheet, [
+        // Tambahkan judul laporan di baris pertama
+        const title = [
             ["Laporan Data Peserta Magang - AMPEL"]
-        ], {
+        ];
+        const worksheet = XLSX.utils.json_to_sheet(data, {
+            origin: "A3"
+        });
+        XLSX.utils.sheet_add_aoa(worksheet, title, {
             origin: "A1"
         });
 
-        // Auto width kolom
+        // Tambahkan header style (bold)
+        const range = XLSX.utils.decode_range(worksheet['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({
+                r: 2,
+                c: C
+            });
+            if (!worksheet[cellAddress]) continue;
+            worksheet[cellAddress].s = {
+                font: {
+                    bold: true
+                }
+            };
+        }
+
+        // Lebar kolom otomatis
         const header = Object.keys(data[0]);
         worksheet['!cols'] = header.map(h => ({
-            wch: Math.max(h.length + 2, ...data.map(d => (d[h]?.length || 0))) + 2
+            wch: Math.max(
+                h.length + 2,
+                ...data.map(d => (d[h] ? d[h].toString().length : 0))
+            ) + 2
         }));
 
+        // Tambahkan tanggal cetak di bawah tabel
+        const footerRow = data.length + 5;
+        XLSX.utils.sheet_add_aoa(
+            worksheet,
+            [
+                ["Dicetak pada:", new Date().toLocaleString('id-ID')]
+            ], {
+                origin: `A${footerRow}`
+            }
+        );
+
+        // Simpan workbook
         XLSX.utils.book_append_sheet(workbook, worksheet, "Peserta Magang");
         XLSX.writeFile(workbook, "Data_Peserta_Magang.xlsx");
     }
