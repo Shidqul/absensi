@@ -24,15 +24,16 @@ Route::get('/datadivisi', function () {
     return view('admin.data-divisi');
 });
 
-Route::get('/laporan', function () {
-    return view('admin.laporan-izin');
-});
-route::get('/laporanmagang', function () {
+route::get('/laporan', function () {
     return view('admin.laporan-magang');
 });
 
 Route::get('/dataabsensi', function () {
     return view('admin.data-absensi');
+});
+
+Route::get('/pengajuanizin', function () {
+    return view('admin.pengajuan-izin');
 });
 
 Route::get('/dashboard', function () {
