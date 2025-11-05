@@ -446,7 +446,7 @@
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table>
+                        <table id="dataTable">
                             <thead>
                                 <tr>
                                     <th><input type="checkbox" class="checkbox" id="checkAll"></th>
@@ -1111,7 +1111,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Ambil semua tombol approval di tabel
         const approvalButtons = document.querySelectorAll('.btn-approval');
+        const rejectButtons = document.querySelectorAll('.btn-reject');
 
+        // Handler untuk tombol approval
         approvalButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const actionContainer = this.closest('.action-buttons');
@@ -1126,6 +1128,128 @@
                 if (rejectBtn) rejectBtn.classList.add('d-none');
             });
         });
+
+        // Handler untuk tombol reject
+        rejectButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Konfirmasi sebelum menghapus
+                if (confirm('Apakah Anda yakin ingin menolak pendaftar ini?')) {
+                    const row = this.closest('tr');
+
+                    // Animasi fade out (optional)
+                    row.style.transition = 'opacity 0.3s';
+                    row.style.opacity = '0';
+
+                    // Hapus baris setelah animasi selesai
+                    setTimeout(() => {
+                        row.remove();
+
+                        // Update nomor urut setelah baris dihapus
+                        updateRowNumbers();
+                    }, 300);
+                }
+            });
+        });
+
+        // Fungsi untuk update nomor urut
+        function updateRowNumbers() {
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            rows.forEach((row, index) => {
+                const noCell = row.querySelector('td:nth-child(2)');
+                if (noCell) {
+                    noCell.textContent = index + 1;
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Button Delete  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.querySelector("#dataTable tbody");
+        const checkAll = document.querySelector("#checkAll");
+
+        // Fungsi untuk update nomor urut
+        function updateRowNumbers() {
+            const rows = tableBody.querySelectorAll("tr");
+            rows.forEach((row, index) => {
+                // Update nomor di kolom kedua (td:nth-child(2))
+                const noCell = row.querySelector("td:nth-child(2)");
+                if (noCell) {
+                    noCell.textContent = index + 1;
+                }
+            });
+        }
+
+        // Fungsi untuk update status checkbox "Check All"
+        function updateCheckAllStatus() {
+            if (!checkAll) return;
+
+            const allCheckboxes = tableBody.querySelectorAll('.row-checkbox');
+            const checkedCheckboxes = tableBody.querySelectorAll('.row-checkbox:checked');
+
+            if (allCheckboxes.length === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checkedCheckboxes.length === allCheckboxes.length) {
+                checkAll.checked = true;
+                checkAll.indeterminate = false;
+            } else if (checkedCheckboxes.length > 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = true;
+            } else {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            }
+        }
+
+        // Expose fungsi ke window
+        window.updateRowNumbers = updateRowNumbers;
+        window.updateCheckAllStatus = updateCheckAllStatus;
+
+        // Event Delegation: Delete Button (btn-unduh dengan icon trash)
+        tableBody.addEventListener("click", function(e) {
+            const target = e.target.closest("button");
+            if (!target) return;
+
+            // Tombol Delete (btn-unduh dengan icon trash)
+            if (target.classList.contains("btn-unduh")) {
+                const row = target.closest("tr");
+
+                if (confirm("Yakin ingin menghapus data ini?")) {
+                    // Tambahkan animasi fade out (opsional)
+                    row.style.transition = "opacity 0.3s";
+                    row.style.opacity = "0";
+
+                    setTimeout(() => {
+                        row.remove();
+                        updateRowNumbers();
+                        updateCheckAllStatus();
+                    }, 300);
+                }
+            }
+        });
+
+        // Check All functionality
+        if (checkAll) {
+            checkAll.addEventListener("change", function() {
+                const allCheckboxes = tableBody.querySelectorAll('.row-checkbox');
+                allCheckboxes.forEach(checkbox => {
+                    checkbox.checked = checkAll.checked;
+                });
+            });
+        }
+
+        // Individual checkbox change
+        tableBody.addEventListener("change", function(e) {
+            if (e.target.classList.contains("row-checkbox")) {
+                updateCheckAllStatus();
+            }
+        });
+
+        // Initialize check all status
+        updateCheckAllStatus();
     });
 </script>
 
