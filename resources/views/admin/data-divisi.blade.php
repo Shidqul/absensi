@@ -370,7 +370,7 @@
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table>
+                        <table id="dataTable">
                             <thead>
                                 <tr>
                                     <th><input type="checkbox" class="checkbox" id="checkAll"></th>
@@ -407,7 +407,7 @@
                                             </button>
 
                                             <!-- Tombol discard -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
+                                            <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24">
                                                     <path fill="none" stroke="currentColor" stroke-linecap="round"
@@ -442,7 +442,7 @@
                                             </button>
 
                                             <!-- Tombol discard -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
+                                            <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24">
                                                     <path fill="none" stroke="currentColor" stroke-linecap="round"
@@ -477,7 +477,7 @@
                                             </button>
 
                                             <!-- Tombol discard -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
+                                            <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24">
                                                     <path fill="none" stroke="currentColor" stroke-linecap="round"
@@ -634,91 +634,224 @@
     });
 </script>
 
-<!-- Button Edit  -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".btn-success");
-        const modal = document.getElementById("editModal");
-        const cancelBtn = document.getElementById("cancelEdit");
-        const form = document.getElementById("editForm");
-
-        // Event ketika klik tombol Edit
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                const cells = row.querySelectorAll("td");
-
-
-                // Isi form dari tabel
-                document.getElementById("editNama").value = cells[2].textContent.trim();
-                document.getElementById("editDivisi").value = cells[3].textContent.trim();
-                document.getElementById("editTelp").value = cells[4].textContent.trim();
-                document.getElementById("editNip").value = cells[5].textContent.trim();
-
-                modal.classList.remove("hidden");
-            });
-        });
-
-
-        // Tutup modal
-        cancelBtn.addEventListener("click", () => {
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
-        });
-
-        // Submit form (simulasi upload)
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            console.log("Data siap dikirim:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ':', pair[1]);
-            }
-
-            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
-        });
-    });
-</script>
-
-<!-- Button tambah  -->
+<!-- Button tambah -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const btnTambah = document.getElementById("btnTambah");
         const modal = document.getElementById("tambahModal");
         const cancelBtn = document.getElementById("cancelTambah");
         const form = document.getElementById("tambahForm");
+        const tableBody = document.querySelector("#dataTable tbody");
+        const checkAll = document.getElementById("checkAll");
 
-        // Tampilkan modal saat tombol Tambah diklik
+        // Fungsi untuk update status checkAll
+        function updateCheckAllStatus() {
+            const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+            const total = rowCheckboxes.length;
+            const checked = Array.from(rowCheckboxes).filter(c => c.checked).length;
+
+            if (total === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checked === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checked === total) {
+                checkAll.checked = true;
+                checkAll.indeterminate = false;
+            } else {
+                checkAll.checked = false;
+                checkAll.indeterminate = true;
+            }
+        }
+
+        // Tampilkan modal saat klik Tambah
         btnTambah.addEventListener("click", () => {
             modal.classList.remove("hidden");
         });
 
-        // Tutup modal saat klik batal
+        // Tutup modal saat klik Batal
         cancelBtn.addEventListener("click", () => {
             modal.classList.add("hidden");
             form.reset();
         });
 
-        // Saat submit form
+        // Fungsi tambah data baru ke tabel
         form.addEventListener("submit", function(e) {
             e.preventDefault();
 
-            const formData = new FormData(form);
-            console.log("Data yang dikirim:");
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
+            const nama = document.getElementById("tambahNama").value.trim();
+            const divisi = document.getElementById("tambahDivisi").value.trim();
+            const telp = document.getElementById("tambahTelp").value.trim();
+            const nip = document.getElementById("tambahNip").value.trim();
+
+            if (!nama || !divisi || !telp || !nip) {
+                alert("Harap isi semua field!");
+                return;
             }
 
-            alert("Data berhasil ditambahkan (simulasi kirim ke backend).");
+            const rowCount = tableBody.rows.length;
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+            <td><input type="checkbox" class="checkbox row-checkbox"></td>
+            <td>${rowCount + 1}</td>
+            <td>${nama}</td>
+            <td>${divisi}</td>
+            <td>${telp}</td>
+            <td>${nip}</td>
+            <td>
+                <div class="action-buttons d-flex gap-2">
+                    <!-- Tombol Edit -->
+                    <button type="button" class="btn btn-success" title="Edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square me-1" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
+                            </path>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
+                            </path>
+                        </svg>
+                    </button>
+                    <!-- Tombol Delete -->
+                    <button type="button" class="btn btn-primary" title="Hapus">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        `;
+
+            tableBody.appendChild(newRow);
+
+            // Tambahkan event listener untuk checkbox baru
+            const newCheckbox = newRow.querySelector('.row-checkbox');
+            newCheckbox.addEventListener('change', updateCheckAllStatus);
+
+            updateRowNumbers();
+            updateCheckAllStatus(); // Update status checkAll setelah tambah baris
+            alert("Data berhasil ditambahkan!");
             modal.classList.add("hidden");
             form.reset();
         });
+
+        // Update nomor urut setelah hapus
+        function updateRowNumbers() {
+            Array.from(tableBody.rows).forEach((row, index) => {
+                row.cells[1].textContent = index + 1;
+            });
+        }
+
+        // Expose fungsi ke global scope agar bisa diakses dari script lain
+        window.updateCheckAllStatus = updateCheckAllStatus;
+        window.updateRowNumbers = updateRowNumbers;
+
+        // Check All - gunakan event delegation untuk handle checkbox dinamis
+        checkAll.addEventListener("change", function() {
+            const checkboxes = document.querySelectorAll(".row-checkbox");
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            checkAll.indeterminate = false;
+        });
+
+        // Event listener untuk checkbox yang sudah ada saat halaman load
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateCheckAllStatus);
+        });
+
+        // Initial update untuk status checkAll
+        updateCheckAllStatus();
     });
 </script>
+
+<!-- Button Edit  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = document.getElementById("editModal");
+        const cancelBtn = document.getElementById("cancelEdit");
+        const form = document.getElementById("editForm");
+        const tableBody = document.querySelector("#dataTable tbody");
+        let currentRow = null; // Simpan referensi baris yang sedang diedit
+
+        // Event delegation untuk tombol Edit (agar berfungsi untuk baris dinamis)
+        tableBody.addEventListener("click", function(e) {
+            const button = e.target.closest(".btn-success");
+            if (!button) return;
+
+            currentRow = button.closest("tr");
+            const cells = currentRow.querySelectorAll("td");
+
+            // Isi form dari tabel
+            document.getElementById("editNama").value = cells[2].textContent.trim();
+            document.getElementById("editDivisi").value = cells[3].textContent.trim();
+            document.getElementById("editTelp").value = cells[4].textContent.trim();
+            document.getElementById("editNip").value = cells[5].textContent.trim();
+
+            modal.classList.remove("hidden");
+        });
+
+        // Tutup modal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+            currentRow = null;
+        });
+
+        // Submit form - Update data di tabel
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if (currentRow) {
+                const cells = currentRow.querySelectorAll("td");
+
+                // Update data di tabel
+                cells[2].textContent = document.getElementById("editNama").value.trim();
+                cells[3].textContent = document.getElementById("editDivisi").value.trim();
+                cells[4].textContent = document.getElementById("editTelp").value.trim();
+                cells[5].textContent = document.getElementById("editNip").value.trim();
+
+                const formData = new FormData(form);
+                console.log("Data yang diupdate:");
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ':', pair[1]);
+                }
+
+                alert("Data berhasil diperbarui!");
+            }
+
+            modal.classList.add("hidden");
+            form.reset();
+            currentRow = null;
+        });
+    });
+</script>
+
+<!-- Button Delete  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.querySelector("#dataTable tbody");
+
+        // Event Delegation: Delete
+        tableBody.addEventListener("click", function(e) {
+            const target = e.target.closest("button");
+            if (!target) return;
+
+            // Tombol Hapus
+            if (target.classList.contains("btn-primary")) {
+                const row = target.closest("tr");
+
+                if (confirm("Yakin ingin menghapus data ini?")) {
+                    row.remove();
+
+                    // Panggil fungsi yang sudah di-expose dari script utama
+                    if (typeof window.updateRowNumbers === 'function') {
+                        window.updateRowNumbers();
+                    }
+                    if (typeof window.updateCheckAllStatus === 'function') {
+                        window.updateCheckAllStatus();
+                    }
+                }
+            }
+        });
+    });
+</script>
+
 
 </html>
