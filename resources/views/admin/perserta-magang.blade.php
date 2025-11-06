@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -241,9 +242,48 @@
             color: #111827;
         }
 
+        /* ✅ Hilangkan jarak di input flatpickr */
+        #editDurasi.flatpickr-input {
+            width: 100% !important;
+        }
+
+        /* ✅ Sembunyikan input alternatif jika ada */
+        .flatpickr-input.flatpickr-mobile {
+            display: none !important;
+        }
+
         /* Sembunyikan kolom Username (ke-9) dan Cv (ke-10) */
         .hide-col {
             display: none;
+        }
+
+        /* blur dan inisiasi */
+        #editModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #editModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        #approvalModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #approvalModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -276,8 +316,8 @@
                 <!-- Durasi Magang -->
                 <div>
                     <label class="block text-gray-700 mb-1" for="editDurasi">Durasi Magang</label>
-                    <input type="text" id="editDurasi" name="editDurasi" placeholder="Pilih tanggal"
-                        class="w-full border rounded-md px-3 py-2" />
+                    <input type="text" id="editDurasi" name="durasi" class="border rounded px-3 py-2 w-full"
+                        placeholder="Pilih tanggal">
                 </div>
 
                 <!-- Divisi -->
@@ -320,6 +360,57 @@
     </div>
 </div>
 
+<!-- ✅ Modal Approval -->
+<div id="approvalModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
+    <div class="flex items-center justify-center h-full">
+        <div class="bg-white rounded-xl shadow-lg w-[600px] p-8 relative">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Approve Peserta Magang</h2>
+
+            <p class="text-gray-600 text-center mb-6">Lengkapi form di bawah ini.</p>
+
+            <form id="approvalForm" class="grid grid-cols-2 gap-4">
+                <!-- Username -->
+                <div class="col-span-2">
+                    <label class="block text-gray-700 mb-1">Username</label>
+                    <input type="text" id="approvalUsername"
+                        class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                        placeholder="Tambah username" required />
+                </div>
+
+                <!-- Divisi -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Divisi</label>
+                    <select id="approvalDivisi"
+                        class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Pilih Divisi</option>
+                        <option value="Teknologi & Informasi">Teknologi & Informasi</option>
+                        <option value="Keuangan">Keuangan</option>
+                        <option value="HRD">HRD</option>
+                    </select>
+                </div>
+
+                <!-- Pembimbing Lapangan -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Pembimbing Lapangan</label>
+                    <select id="approvalPembimbing"
+                        class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Pilih Pembimbing</option>
+                        <option value="Rudi Affandi, S.Kom., M.T.">Rudi Affandi, S.Kom., M.T.</option>
+                        <option value="Prasetyo, S.E., M.M.">Prasetyo, S.E., M.M.</option>
+                    </select>
+                </div>
+
+                <!-- Tombol -->
+                <div class="col-span-2 flex justify-end mt-6">
+                    <button type="button" id="cancelApproval"
+                        class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md mr-2 transition">Batal</button>
+                    <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <body class="bg-background-light dark:bg-background-dark font-display">
@@ -360,7 +451,8 @@
                     </li>
                     <!-- Laporan -->
                     <li class="mb-4">
-                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors" href="/laporan">
+                        <a class="flex items-center p-2 rounded-md hover:bg-white/20 transition-colors"
+                            href="/laporan">
                             <span class="material-icons mr-3">description</span>
                             LAPORAN
                         </a>
@@ -1004,57 +1096,127 @@
 <!-- Button edit -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".btn-success");
         const modal = document.getElementById("editModal");
         const cancelBtn = document.getElementById("cancelEdit");
         const form = document.getElementById("editForm");
         const cvInput = document.getElementById("editCv");
         const cvLink = document.getElementById("cvPreviewLink");
+        const tableBody = document.querySelector("#dataTable tbody");
+        let currentRow = null;
 
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
+        // ✅ Inisialisasi Flatpickr LANGSUNG di sini
+        const flatpickrInstance = flatpickr("#editDurasi", {
+            mode: "range",
+            dateFormat: "d F Y",
+            allowInput: true,
+            clickOpens: true,
+            locale: {
+                firstDayOfWeek: 1,
+                rangeSeparator: ' - ',
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                }
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.input.placeholder = "18 Juni 2026 - 18 September 2026";
+            }
+        });
 
-                // Ambil data dari kolom tabel (urutan menyesuaikan tabel kamu)
-                const nama = row.querySelector("td:nth-child(3)")?.textContent.trim() || "";
-                const asal = row.querySelector("td:nth-child(4)")?.textContent.trim() || "";
-                const telp = row.querySelector("td:nth-child(5)")?.textContent.trim() || "";
-                const durasi = row.querySelector("td:nth-child(6)")?.textContent.trim() || "";
-                const divisi = row.querySelector("td:nth-child(7)")?.textContent.trim() || "";
-                const pembimbing = row.querySelector("td:nth-child(8)")?.textContent.trim() ||
-                    "";
-                const username = row.querySelector("td.hide-col.username")?.textContent
-                    .trim() || "";
-                const cvCell = row.querySelector("td.hide-col.cv");
+        // Event delegation untuk tombol Edit
+        tableBody.addEventListener("click", function(e) {
+            const button = e.target.closest(".btn-success");
+            if (!button) return;
 
-                // Isi nilai ke form modal
-                document.getElementById("editNama").value = nama;
-                document.getElementById("editAsal").value = asal;
-                document.getElementById("editTelp").value = telp;
-                document.getElementById("editDurasi").value = durasi;
-                document.getElementById("editDivisi").value = divisi;
-                document.getElementById("editPembimbing").value = pembimbing;
-                document.getElementById("editUsername").value = username;
+            currentRow = button.closest("tr");
 
-                // Tampilkan link CV lama jika ada
-                if (cvCell && cvCell.querySelector("a")) {
-                    const cvUrl = cvCell.querySelector("a").getAttribute("href");
-                    cvLink.href = cvUrl;
-                    cvLink.textContent = "Lihat CV Lama";
-                    cvLink.classList.remove("hidden");
-                } else {
-                    cvLink.classList.add("hidden");
+            // Ambil data dari kolom tabel
+            const nama = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
+            const asal = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
+            const telp = currentRow.querySelector("td:nth-child(5)")?.textContent.trim() || "";
+            const durasi = currentRow.querySelector("td:nth-child(6)")?.textContent.trim() || "";
+            const divisi = currentRow.querySelector("td:nth-child(7)")?.textContent.trim() || "";
+            const pembimbing = currentRow.querySelector("td:nth-child(8)")?.textContent.trim() || "";
+            const username = currentRow.querySelector("td.hide-col.username")?.textContent.trim() || "";
+            const cvCell = currentRow.querySelector("td.hide-col.cv");
+
+            // Isi nilai ke form modal
+            document.getElementById("editNama").value = nama;
+            document.getElementById("editAsal").value = asal;
+            document.getElementById("editTelp").value = telp;
+            document.getElementById("editDivisi").value = divisi;
+            document.getElementById("editPembimbing").value = pembimbing;
+            document.getElementById("editUsername").value = username;
+
+            // ✅ Set nilai Flatpickr dengan format yang benar
+            if (durasi && durasi.includes(' - ')) {
+                const dates = durasi.split(' - ').map(d => d.trim());
+
+                // Parse tanggal Indonesia ke Date object
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1]];
+                        const year = parseInt(parts[2]);
+                        return new Date(year, month, day);
+                    }
+                    return null;
                 }
 
-                modal.classList.remove("hidden");
-            });
+                const startDate = parseIndonesianDate(dates[0]);
+                const endDate = parseIndonesianDate(dates[1]);
+
+                if (startDate && endDate) {
+                    flatpickrInstance.setDate([startDate, endDate], true);
+                }
+            } else {
+                flatpickrInstance.clear();
+            }
+
+            // Tampilkan link CV lama jika ada
+            if (cvCell && cvCell.querySelector("a")) {
+                const cvUrl = cvCell.querySelector("a").getAttribute("href");
+                cvLink.href = cvUrl;
+                cvLink.textContent = "Lihat CV Lama";
+                cvLink.classList.remove("hidden");
+            } else {
+                cvLink.classList.add("hidden");
+            }
+
+            modal.classList.remove("hidden");
         });
 
         // Tombol batal
         cancelBtn.addEventListener("click", () => {
             modal.classList.add("hidden");
             form.reset();
+            flatpickrInstance.clear();
             cvLink.classList.add("hidden");
+            currentRow = null;
         });
 
         // Preview CV baru (PDF)
@@ -1070,38 +1232,33 @@
             }
         });
 
-        // Simpan (sementara masih simulasi)
+        // Submit form - Update data di tabel
         form.addEventListener("submit", function(e) {
             e.preventDefault();
-            alert("Perubahan data berhasil disimpan! (Simulasi)");
-            modal.classList.add("hidden");
-        });
-    });
 
-    // ✅ Inisialisasi Flatpickr agar bisa diklik dan diketik
-    document.addEventListener("DOMContentLoaded", function() {
-        flatpickr("#editDurasi", {
-            mode: "range", // untuk memilih dua tanggal
-            dateFormat: "d-m-Y", // format tanggal
-            allowInput: true, // ✅ agar bisa diketik manual
-            clickOpens: true, // ✅ agar bisa diklik untuk membuka kalender
-            altInput: true, // tampilan lebih rapi
-            altFormat: "d F Y", // format tampilan yang ramah pengguna
-            locale: {
-                firstDayOfWeek: 1, // minggu dimulai dari Senin
-                weekdays: {
-                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-                },
-                months: {
-                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
-                        'Nov', 'Des'
-                    ],
-                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                    ]
-                }
+            if (currentRow) {
+                // Update data di tabel
+                currentRow.querySelector("td:nth-child(3)").textContent = document.getElementById(
+                    "editNama").value.trim();
+                currentRow.querySelector("td:nth-child(4)").textContent = document.getElementById(
+                    "editAsal").value.trim();
+                currentRow.querySelector("td:nth-child(5)").textContent = document.getElementById(
+                    "editTelp").value.trim();
+                currentRow.querySelector("td:nth-child(6)").textContent = document.getElementById(
+                    "editDurasi").value.trim();
+                currentRow.querySelector("td:nth-child(7)").textContent = document.getElementById(
+                    "editDivisi").value.trim();
+                currentRow.querySelector("td:nth-child(8)").textContent = document.getElementById(
+                    "editPembimbing").value.trim();
+
+                alert("Data berhasil diperbarui!");
             }
+
+            modal.classList.add("hidden");
+            form.reset();
+            flatpickrInstance.clear();
+            cvLink.classList.add("hidden");
+            currentRow = null;
         });
     });
 </script>
@@ -1109,60 +1266,96 @@
 <!-- Button Hidden  -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Ambil semua tombol approval di tabel
         const approvalButtons = document.querySelectorAll('.btn-approval');
         const rejectButtons = document.querySelectorAll('.btn-reject');
 
-        // Handler untuk tombol approval
+        const modal = document.getElementById('approvalModal');
+        const cancelBtn = document.getElementById('cancelApproval');
+        const approvalForm = document.getElementById('approvalForm');
+
+        const usernameInput = document.getElementById('approvalUsername');
+        const divisiSelect = document.getElementById('approvalDivisi');
+        const pembimbingSelect = document.getElementById('approvalPembimbing');
+
+        let selectedRow = null; // simpan baris yang sedang di-approve
+
+        // === [1] Klik tombol approval → buka modal ===
         approvalButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                const actionContainer = this.closest('.action-buttons');
-                const hiddenButtons = actionContainer.querySelectorAll('.btn-hidden');
-
-                // Tampilkan tombol yang disembunyikan
-                hiddenButtons.forEach(b => b.classList.remove('d-none'));
-
-                // Sembunyikan tombol approval & reject
-                const rejectBtn = actionContainer.querySelector('.btn-reject');
-                btn.classList.add('d-none');
-                if (rejectBtn) rejectBtn.classList.add('d-none');
+                selectedRow = this.closest('tr');
+                modal.classList.remove('hidden'); // tampilkan modal
             });
         });
 
-        // Handler untuk tombol reject
+        // === [2] Klik batal → tutup modal ===
+        cancelBtn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+            approvalForm.reset();
+            selectedRow = null;
+        });
+
+        // === [3] Submit form approval ===
+        approvalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!selectedRow) return;
+
+            const username = usernameInput.value.trim();
+            const divisi = divisiSelect.value;
+            const pembimbing = pembimbingSelect.value;
+
+            if (!username || !divisi || !pembimbing) {
+                alert("Lengkapi semua field sebelum menyetujui peserta.");
+                return;
+            }
+
+            // Update tabel sesuai input form
+            selectedRow.querySelector('td:nth-child(7)').textContent = divisi;
+            selectedRow.querySelector('td:nth-child(8)').textContent = pembimbing;
+            selectedRow.querySelector('td:nth-child(9)').textContent = username;
+
+            // Sembunyikan tombol approval & reject
+            const actionContainer = selectedRow.querySelector('.action-buttons');
+            const approveBtn = actionContainer.querySelector('.btn-approval');
+            const rejectBtn = actionContainer.querySelector('.btn-reject');
+            if (approveBtn) approveBtn.classList.add('d-none');
+            if (rejectBtn) rejectBtn.classList.add('d-none');
+
+            // Tampilkan tombol yang tersembunyi
+            const hiddenButtons = actionContainer.querySelectorAll('.btn-hidden');
+            hiddenButtons.forEach(b => b.classList.remove('d-none'));
+
+            // Tutup modal
+            modal.classList.add('hidden');
+            approvalForm.reset();
+            selectedRow = null;
+        });
+
+        // === [4] Tombol reject ===
         rejectButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Konfirmasi sebelum menghapus
                 if (confirm('Apakah Anda yakin ingin menolak pendaftar ini?')) {
                     const row = this.closest('tr');
-
-                    // Animasi fade out (optional)
                     row.style.transition = 'opacity 0.3s';
                     row.style.opacity = '0';
-
-                    // Hapus baris setelah animasi selesai
                     setTimeout(() => {
                         row.remove();
-
-                        // Update nomor urut setelah baris dihapus
                         updateRowNumbers();
                     }, 300);
                 }
             });
         });
 
-        // Fungsi untuk update nomor urut
+        // === [5] Fungsi update nomor urut ===
         function updateRowNumbers() {
             const rows = document.querySelectorAll('#dataTable tbody tr');
             rows.forEach((row, index) => {
                 const noCell = row.querySelector('td:nth-child(2)');
-                if (noCell) {
-                    noCell.textContent = index + 1;
-                }
+                if (noCell) noCell.textContent = index + 1;
             });
         }
     });
 </script>
+
 
 <!-- Button Delete  -->
 <script>
