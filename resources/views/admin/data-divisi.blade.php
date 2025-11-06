@@ -169,6 +169,35 @@
         .flatpickr-weekdays {
             color: #111827;
         }
+
+        /* blur dan inisiasi */
+        #editModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #editModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        #tambahModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #tambahModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
