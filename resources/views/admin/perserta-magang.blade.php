@@ -1193,6 +1193,41 @@
                 if (startDate && endDate) {
                     flatpickrInstance.setDate([startDate, endDate], true);
                 }
+            } else if (durasi) {
+                // Jika durasi tunggal (bukan range)
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+                            .toLowerCase()];
+                        const year = parseInt(parts[2]);
+                        if (month !== undefined) {
+                            return new Date(year, month, day);
+                        }
+                    }
+                    return null;
+                }
+
+                const singleDate = parseIndonesianDate(durasi);
+                if (singleDate) {
+                    flatpickrInstance.setDate(singleDate, true);
+                }
             } else {
                 flatpickrInstance.clear();
             }
@@ -1237,6 +1272,9 @@
             e.preventDefault();
 
             if (currentRow) {
+                // ✅ Ambil nilai durasi dari Flatpickr instance, bukan dari input langsung
+                const durasiValue = flatpickrInstance.input.value.trim();
+
                 // Update data di tabel
                 currentRow.querySelector("td:nth-child(3)").textContent = document.getElementById(
                     "editNama").value.trim();
@@ -1244,12 +1282,20 @@
                     "editAsal").value.trim();
                 currentRow.querySelector("td:nth-child(5)").textContent = document.getElementById(
                     "editTelp").value.trim();
-                currentRow.querySelector("td:nth-child(6)").textContent = document.getElementById(
-                    "editDurasi").value.trim();
+                if (durasiValue) {
+                    currentRow.querySelector("td:nth-child(6)").textContent = durasiValue;
+                }
                 currentRow.querySelector("td:nth-child(7)").textContent = document.getElementById(
                     "editDivisi").value.trim();
                 currentRow.querySelector("td:nth-child(8)").textContent = document.getElementById(
                     "editPembimbing").value.trim();
+
+                // Log data untuk debugging (simulasi kirim ke backend)
+                const formData = new FormData(form);
+                console.log("Data siap dikirim:");
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ':', pair[1]);
+                }
 
                 alert("Data berhasil diperbarui!");
             }
@@ -1262,6 +1308,8 @@
         });
     });
 </script>
+
+
 
 <!-- Button Hidden  -->
 <script>
