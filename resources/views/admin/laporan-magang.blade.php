@@ -206,6 +206,27 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
+
+        /* blur dan inisiasi */
+        #editModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #editModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 
 </head>
@@ -360,7 +381,7 @@
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table>
+                        <table id="dataTable">
                             <thead>
                                 <tr>
                                     <th><input type="checkbox" class="checkbox" id="checkAll"></th>
@@ -894,81 +915,224 @@
     });
 </script>
 
-<!-- Button Edit  -->
+<!-- Button Edit -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".btn-success");
         const modal = document.getElementById("editModal");
         const cancelBtn = document.getElementById("cancelEdit");
         const form = document.getElementById("editForm");
+        const tableBody = document.querySelector("#dataTable tbody");
+        let currentRow = null;
 
-        // Event ketika klik tombol Edit
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                const cells = row.querySelectorAll("td");
-
-                let deskripsi = cells[4].innerText || cells[4].textContent;
-                deskripsi = deskripsi.split(/\s+/).filter(word => word).join(' ');
-
-                // Isi form dari tabel
-                document.getElementById("editTanggal").value = cells[2].textContent.trim();
-                document.getElementById("editNama").value = cells[3].textContent.trim();
-                document.getElementById("editDeskripsi").value = deskripsi;
-
-                modal.classList.remove("hidden");
-            });
-        });
-
-
-        // Tutup modal
-        cancelBtn.addEventListener("click", () => {
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
-        });
-
-        // Submit form (simulasi upload)
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            console.log("Data siap dikirim:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ':', pair[1]);
-            }
-
-            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
-        });
-    });
-
-
-    // ✅ Inisialisasi Flatpickr agar bisa diklik dan diketik
-    document.addEventListener("DOMContentLoaded", function() {
-        flatpickr("#editTanggal", {
-            mode: "range", // untuk memilih dua tanggal
-            dateFormat: "d-m-Y", // format tanggal
-            allowInput: true, // ✅ agar bisa diketik manual
-            clickOpens: true, // ✅ agar bisa diklik untuk membuka kalender
-            altInput: true, // tampilan lebih rapi
-            altFormat: "d F Y", // format tampilan yang ramah pengguna
+        // ✅ Inisialisasi Flatpickr LANGSUNG di sini
+        const flatpickrInstance = flatpickr("#editTanggal", {
+            mode: "range",
+            dateFormat: "d-m-Y",
+            allowInput: true,
+            clickOpens: true,
+            altInput: true,
+            altFormat: "d F Y",
             locale: {
-                firstDayOfWeek: 1, // minggu dimulai dari Senin
+                firstDayOfWeek: 1,
+                rangeSeparator: ' - ',
                 weekdays: {
                     shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
                     longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
                 },
                 months: {
-                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt',
                         'Nov', 'Des'
                     ],
                     longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
                         'Agustus', 'September', 'Oktober', 'November', 'Desember'
                     ]
                 }
+            },
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.altInput.placeholder = "1 Januari 2026 - 31 Desember 2026";
+            }
+        });
+
+        // ✅ Event delegation untuk tombol Edit (lebih efisien)
+        tableBody.addEventListener("click", function(e) {
+            const button = e.target.closest(".btn-success");
+            if (!button) return;
+
+            currentRow = button.closest("tr");
+            const cells = currentRow.querySelectorAll("td");
+
+            // Bersihkan whitespace berlebih di deskripsi
+            let deskripsi = cells[4]?.innerText || cells[4]?.textContent || "";
+            deskripsi = deskripsi.split(/\s+/).filter(word => word).join(' ');
+
+            // Ambil nilai tanggal dari tabel
+            const tanggal = cells[2]?.textContent.trim() || "";
+
+            // Isi form dari tabel
+            document.getElementById("editNama").value = cells[3]?.textContent.trim() || "";
+            document.getElementById("editDeskripsi").value = deskripsi;
+
+            // ✅ Set nilai Flatpickr dengan parsing tanggal Indonesia
+            if (tanggal && tanggal.includes(' - ')) {
+                const dates = tanggal.split(' - ').map(d => d.trim());
+
+                // Parse tanggal Indonesia ke Date object
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1]];
+                        const year = parseInt(parts[2]);
+                        return new Date(year, month, day);
+                    }
+                    return null;
+                }
+
+                const startDate = parseIndonesianDate(dates[0]);
+                const endDate = parseIndonesianDate(dates[1]);
+
+                if (startDate && endDate) {
+                    flatpickrInstance.setDate([startDate, endDate], true);
+                }
+            } else {
+                flatpickrInstance.clear();
+            }
+
+            modal.classList.remove("hidden");
+        });
+
+        // Tombol batal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+            flatpickrInstance.clear();
+            currentRow = null;
+        });
+
+        // Submit form - Update data di tabel
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            if (currentRow) {
+                const cells = currentRow.querySelectorAll("td");
+
+                // Update data di tabel
+                cells[2].textContent = flatpickrInstance.altInput.value.trim();
+                cells[3].textContent = document.getElementById("editNama").value.trim();
+                cells[4].textContent = document.getElementById("editDeskripsi").value.trim();
+
+                // Log data untuk debugging (simulasi kirim ke backend)
+                const formData = new FormData(form);
+                console.log("Data siap dikirim:");
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ':', pair[1]);
+                }
+
+                alert("Perubahan disimpan! (Data berhasil diperbarui)");
+            }
+
+            modal.classList.add("hidden");
+            form.reset();
+            flatpickrInstance.clear();
+            currentRow = null;
+        });
+    });
+</script>
+
+<!-- Button Delete  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.querySelector("#dataTable tbody");
+
+        // Fungsi untuk update nomor urut
+        function updateRowNumbers() {
+            const rows = tableBody.querySelectorAll("tr");
+            rows.forEach((row, index) => {
+                const numberCell = row.querySelector(
+                    "td:nth-child(2)"); // Kolom No (index 2 karena ada checkbox di index 1)
+                if (numberCell) {
+                    numberCell.textContent = (index + 1) + ".";
+                }
+            });
+        }
+
+        // Fungsi untuk update status checkbox "Select All"
+        function updateCheckAllStatus() {
+            const checkAll = document.querySelector("#checkAll");
+            const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+            const checkedBoxes = document.querySelectorAll(".row-checkbox:checked");
+
+            if (checkAll && rowCheckboxes.length > 0) {
+                checkAll.checked = checkedBoxes.length === rowCheckboxes.length;
+            }
+        }
+
+        // Expose fungsi ke window agar bisa dipanggil dari script lain
+        window.updateRowNumbers = updateRowNumbers;
+        window.updateCheckAllStatus = updateCheckAllStatus;
+
+        // Event Delegation: Delete Button
+        tableBody.addEventListener("click", function(e) {
+            const target = e.target.closest("button");
+            if (!target) return;
+
+            // Tombol Hapus (btn-primary dengan icon trash)
+            if (target.classList.contains("btn-primary")) {
+                const row = target.closest("tr");
+
+                if (confirm("Yakin ingin menghapus data ini?")) {
+                    row.remove();
+
+                    // Update nomor urut setelah hapus
+                    updateRowNumbers();
+
+                    // Update status checkbox "Select All"
+                    updateCheckAllStatus();
+
+                    // Cek apakah tabel kosong
+                    const remainingRows = tableBody.querySelectorAll("tr");
+                    if (remainingRows.length === 0) {
+                        // Optional: Tambahkan pesan jika tabel kosong
+                        const emptyRow = document.createElement("tr");
+                        emptyRow.innerHTML = `
+                            <td colspan="8" style="text-align: center; padding: 20px; color: #666;">
+                                Tidak ada data absensi
+                            </td>
+                        `;
+                        tableBody.appendChild(emptyRow);
+                    }
+                }
+            }
+        });
+
+        // Optional: Tambahkan event listener untuk checkbox "Select All"
+        const checkAll = document.querySelector("#checkAll");
+        if (checkAll) {
+            checkAll.addEventListener("change", function() {
+                const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+                rowCheckboxes.forEach(cb => cb.checked = checkAll.checked);
+            });
+        }
+
+        // Optional: Update status "Select All" saat individual checkbox diubah
+        tableBody.addEventListener("change", function(e) {
+            if (e.target.classList.contains("row-checkbox")) {
+                updateCheckAllStatus();
             }
         });
     });
