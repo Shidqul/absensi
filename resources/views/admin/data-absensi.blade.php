@@ -42,6 +42,19 @@
     </script>
 
     <style>
+        /* Styling untuk header "List Data Absensi" - sesuai dengan "List Peserta Magang" */
+        .page-header,
+        h1.page-title,
+        .list-header {
+            background-color: #3b3f8f;
+            /* Biru navy seperti List Peserta Magang */
+            color: #ffffff;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+        }
+
         /* Bungkus tombol Export Data dalam container agar bisa diatur posisinya */
         .export-container {
             display: flex;
@@ -131,6 +144,14 @@
             background: #f9f9f9;
         }
 
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4a58ad;
+            /* biru */
+            cursor: pointer;
+        }
+
         /* Kontainer tombol di kolom AKSI */
         .action-buttons {
             display: flex;
@@ -140,49 +161,30 @@
             /* Jarak antar tombol */
         }
 
-        /* Tombol umum di tabel */
+        /* ✅ Ukuran tombol aksi seragam */
         .action-buttons .btn {
+            width: 36px;
+            height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 500;
             border-radius: 6px;
-            padding: 6px 12px;
-            transition: all 0.2s ease;
-            /* teks putih */
-            color: #fff !important;
-
+            transition: 0.2s;
+            color: #fff;
+            padding: 0;
+            /* hilangkan padding agar ukuran fix */
         }
 
-        /* Ikon SVG agar sejajar dengan teks */
-        .action-buttons .btn svg {
-            margin-right: 6px;
-            vertical-align: middle;
-            /* ikon putih */
-            fill: #fff;
-        }
-
-        /* Warna tombol Edit (hijau) */
+        /* Warna tombol edit */
         .action-buttons .btn-success {
-            background-color: #4FD283;
-            border-color: none;
+            background-color: #ffc107;
+            /* warna kuning */
         }
 
-        .action-buttons .btn-success:hover {
-            background-color: #4FD283;
-            border-color: none;
-        }
-
-        /* Warna tombol Unduh (biru) */
+        /* Warna tombol hapus */
         .action-buttons .btn-primary {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
-        }
-
-        .action-buttons .btn-primary:hover {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
+            background-color: #dc3545;
+            /* warna merah */
         }
 
         /* Responsive - jaga jarak tombol di layar kecil */
@@ -216,6 +218,28 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
+
+
+        /* blur dan inisiasi */
+        #editModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #editModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -237,11 +261,6 @@
                     <label class="block text-gray-700 mb-1">Nama Lengkap</label>
                     <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
                 </div>
-                <!-- Username -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Username</label>
-                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
-                </div>
                 <!-- Jam Masuk -->
                 <div>
                     <label class="block text-gray-700 mb-1">Jam Masuk</label>
@@ -253,6 +272,16 @@
                     <label class="block text-gray-700 mb-1">Jam Pulang</label>
                     <input type="text" id="editPulang" class="w-full border rounded-md px-3 py-2"
                         placeholder="Pilih Jam Pulang..." />
+                </div>
+                <!-- Keterangan -->
+                <div>
+                    <label class="block text-gray-700 mb-1">Keterangan</label>
+                    <select id="editKeterangan"
+                        class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Pilih Ketrangan</option>
+                        <option value="TEPAT WAKTU">TEPAT WAKTU</option>
+                        <option value="TELAT">TELAT</option>
+                    </select>
                 </div>
                 <!-- Tombol Aksi -->
                 <div class="col-span-2 flex justify-end mt-6">
@@ -331,12 +360,21 @@
                 <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Absensi</h2>
             </header>
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-                <div class="bg-indigo-700 dark:bg-indigo-900 text-white p-4 rounded-t-lg">
+                <div class="bg-indigo-700 dark:bg-indigo-900 text-white p-4 rounded-t-lg"
+                    style="background-color: #3b3f8f;">
                     <h3 class="font-semibold">List Data Absensi</h3>
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center space-x-4">
+                            <!-- dropdown pindah halaman  -->
+                            <a class="relative">
+                                <select id="laporanSelect"
+                                    class="w-48 appearance-none bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md py-2 pl-3 pr-10 text-text-light dark:text-text-dark focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                                    <option value="dataabsensi">Data Absensi</option>
+                                    <option value="pengajuanizin">Pengajuan Izin</option>
+                                </select>
+                            </a>
                             <!-- Filter & Search -->
                             <input type="date" value="2026-04-26">
                             <i class="fas fa-filter mb-4" style="color: #666; cursor: pointer;"></i>
@@ -384,13 +422,13 @@
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table>
+                        <table id="dataTable">
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" class="checkbox" id="checkAll"></th>
                                     <th>No.</th>
                                     <th>TANGGAL</th>
                                     <th>NAMA LENGKAP</th>
-                                    <th>USERNAME</th>
                                     <th>JAM MASUK</th>
                                     <th>JAM PULANG</th>
                                     <th>KETERANGAN</th>
@@ -399,10 +437,10 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>1.</td>
-                                    <td>15/04/2026</td>
+                                    <td>15 april 2026</td>
                                     <td>Ade Setiawan</td>
-                                    <td>adesetiawan113</td>
                                     <td>07:34:22</td>
                                     <td>17:06:15</td>
                                     <td><span class="status-badge status-tepat">TEPAT WAKTU</span></td>
@@ -420,31 +458,25 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>2</td>
-                                    <td>17/04/2026</td>
+                                    <td>17 april 2026</td>
                                     <td>Satria Bima Nugroho</td>
-                                    <td>satriabima127</td>
                                     <td>07:42:22</td>
                                     <td>17:11:15</td>
                                     <td><span class="status-badge status-tepat">TEPAT WAKTU</span></td>
@@ -462,31 +494,25 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>3</td>
-                                    <td>15/04/2026</td>
+                                    <td>15 april 2026</td>
                                     <td>Candra Kusuma</td>
-                                    <td>candrakusuma118</td>
                                     <td>08:02:22</td>
                                     <td>17:07:15</td>
                                     <td><span class="status-badge status-terlambat">TELAT</span></td>
@@ -504,22 +530,16 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
@@ -572,17 +592,22 @@
 
             data.forEach((row, i) => {
                 const clone = row.cloneNode(true);
-                const firstCell = clone.querySelector("td:first-child");
-                if (firstCell) firstCell.textContent = i + 1; // update nomor urut
+
+                // Update nomor urut di kolom ke-2 (bukan kolom pertama yang berisi checkbox)
+                const numberCell = clone.querySelector("td:nth-child(2)");
+                if (numberCell) {
+                    numberCell.textContent = (i + 1) + ".";
+                }
+
                 table.appendChild(clone);
             });
         }
 
-        // 🔹 Filter berdasarkan nama (kolom ke-2)
+        // 🔹 Filter berdasarkan nama (kolom ke-4)
         function filterTable() {
             const keyword = searchInput.value.toLowerCase();
             const filtered = currentRows.filter(row => {
-                const nameCell = row.children[2]; // kolom nama
+                const nameCell = row.children[3]; // kolom nama (index ke-3)
                 if (!nameCell) return false;
                 return nameCell.textContent.toLowerCase().includes(keyword);
             });
@@ -689,9 +714,11 @@
     });
 </script>
 
-<!-- Export Data  -->
+<!-- Export Data Absensi Berdasarkan Checkbox -->
 <script>
-    // Toggle Export Dropdown
+    // ===============================
+    // 🔹 Toggle Dropdown Export
+    // ===============================
     const exportBtn = document.getElementById('exportBtn');
     const exportDropdown = document.getElementById('exportDropdown');
 
@@ -701,75 +728,103 @@
             exportDropdown.classList.toggle('show');
         });
 
-        // Close dropdown when clicking outside
+        // Tutup dropdown jika klik di luar
         document.addEventListener('click', function() {
             exportDropdown.classList.remove('show');
         });
     }
 
-    // Ambil data dari tabel HTML
-    function getTableData() {
-        const rows = document.querySelectorAll("tbody tr");
-        const data = [];
-        rows.forEach((row, index) => {
-            const cells = row.querySelectorAll("td");
-            if (cells.length >= 7) {
-                data.push({
-                    "No": index + 1,
-                    "Tanggal": cells[1].textContent.trim(),
-                    "Nama Lengkap": cells[2].textContent.trim(),
-                    "Username": cells[3].textContent.trim(),
-                    "Jam Masuk": cells[4].textContent.trim(),
-                    "Jam Pulang": cells[5].textContent.trim(),
-                    "Keterangan": cells[6].textContent.trim(),
+    // ===============================
+    // 🔹 Checkbox "Select All" (Header)
+    // ===============================
+    const checkAll = document.querySelector('#checkAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
 
-                });
-            }
+    if (checkAll) {
+        checkAll.addEventListener('change', function() {
+            rowCheckboxes.forEach(cb => cb.checked = checkAll.checked);
         });
+    }
+
+    // ===============================
+    // 🔹 Ambil Data dari Baris yang Dicentang
+    // ===============================
+    function getCheckedRowsData() {
+        const checkedBoxes = document.querySelectorAll('.row-checkbox:checked');
+        const data = [];
+
+        checkedBoxes.forEach((checkbox, index) => {
+            const row = checkbox.closest('tr');
+            const cells = row.querySelectorAll('td');
+
+            // Sesuaikan dengan struktur tabel absensi
+            data.push({
+                "No": index + 1,
+                "Tanggal": cells[2]?.textContent.trim() || "",
+                "Nama Lengkap": cells[3]?.textContent.trim() || "",
+                "Jam Masuk": cells[4]?.textContent.trim() || "",
+                "Jam Pulang": cells[5]?.textContent.trim() || "",
+                "Keterangan": cells[6]?.textContent.trim() || "",
+            });
+        });
+
         return data;
     }
 
-    // ✅ Export ke Excel (versi rapi)
+    // ===============================
+    // 🔹 Export ke Excel
+    // ===============================
     function exportToExcel() {
-        const data = getTableData();
+        const data = getCheckedRowsData();
+
         if (data.length === 0) {
-            alert("Tidak ada data untuk diexport!");
+            alert("Silakan pilih minimal satu data dengan mencentang checkbox!");
             return;
         }
 
-        // Buat worksheet dan workbook
-        const worksheet = XLSX.utils.json_to_sheet(data, {
-            origin: "A2"
-        });
         const workbook = XLSX.utils.book_new();
 
-        // Tambah judul laporan di atas tabel
-        XLSX.utils.sheet_add_aoa(worksheet, [
+        const title = [
             ["Data Absensi Magang - AMPEL"]
-        ], {
+        ];
+        const worksheet = XLSX.utils.json_to_sheet(data, {
+            origin: "A3"
+        });
+
+        XLSX.utils.sheet_add_aoa(worksheet, title, {
             origin: "A1"
         });
 
-        // Format header tabel (bold)
-        const header = Object.keys(data[0]);
-        XLSX.utils.sheet_add_aoa(worksheet, [header], {
-            origin: "A2"
-        });
-
-        // ✅ Auto width kolom
-        const columnWidths = header.map(h => {
-            const maxLength = Math.max(
-                h.length,
-                ...data.map(d => d[h]?.toString().length || 0)
-            );
-            return {
-                wch: maxLength + 3
-            }; // tambah padding
-        });
-        worksheet['!cols'] = columnWidths;
-
-        // Tambah border (manual styling basic)
+        // Tambahkan header style bold
         const range = XLSX.utils.decode_range(worksheet['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({
+                r: 2,
+                c: C
+            });
+            if (!worksheet[cellAddress]) continue;
+            worksheet[cellAddress].s = {
+                font: {
+                    bold: true
+                },
+                fill: {
+                    fgColor: {
+                        rgb: "DCE6F1"
+                    }
+                }
+            };
+        }
+
+        // Lebar kolom otomatis
+        const header = Object.keys(data[0]);
+        worksheet['!cols'] = header.map(h => ({
+            wch: Math.max(
+                h.length + 2,
+                ...data.map(d => (d[h] ? d[h].toString().length : 0))
+            ) + 2
+        }));
+
+        // Tambahkan border ke semua cell
         for (let R = range.s.r; R <= range.e.r; ++R) {
             for (let C = range.s.c; C <= range.e.c; ++C) {
                 const cellRef = XLSX.utils.encode_cell({
@@ -777,315 +832,441 @@
                     c: C
                 });
                 if (!worksheet[cellRef]) continue;
-                worksheet[cellRef].s = {
-                    border: {
-                        top: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        bottom: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        left: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
-                        right: {
-                            style: "thin",
-                            color: {
-                                rgb: "000000"
-                            }
-                        },
+                if (!worksheet[cellRef].s) worksheet[cellRef].s = {};
+                worksheet[cellRef].s.border = {
+                    top: {
+                        style: "thin",
+                        color: {
+                            rgb: "000000"
+                        }
                     },
-                    alignment: {
+                    bottom: {
+                        style: "thin",
+                        color: {
+                            rgb: "000000"
+                        }
+                    },
+                    left: {
+                        style: "thin",
+                        color: {
+                            rgb: "000000"
+                        }
+                    },
+                    right: {
+                        style: "thin",
+                        color: {
+                            rgb: "000000"
+                        }
+                    },
+                };
+                if (!worksheet[cellRef].s.alignment) {
+                    worksheet[cellRef].s.alignment = {
                         vertical: "center",
                         horizontal: "left",
                         wrapText: true
-                    },
-                };
-                if (R === 1) { // header row
-                    worksheet[cellRef].s.font = {
-                        bold: true
-                    };
-                    worksheet[cellRef].s.fill = {
-                        fgColor: {
-                            rgb: "DCE6F1"
-                        }
                     };
                 }
             }
         }
 
-        // Tambah worksheet ke workbook dan simpan file
+        // Tambahkan tanggal cetak
+        const footerRow = data.length + 5;
+        XLSX.utils.sheet_add_aoa(
+            worksheet,
+            [
+                ["Dicetak pada:", new Date().toLocaleString('id-ID')]
+            ], {
+                origin: `A${footerRow}`
+            }
+        );
+
         XLSX.utils.book_append_sheet(workbook, worksheet, "Data Absensi Magang");
-        XLSX.writeFile(workbook, "Data_Data_Absensi_Magang.xlsx");
+        XLSX.writeFile(workbook, "Data_Absensi_Magang.xlsx");
     }
 
-    // Export ke PDF (Perbaikan utama)
+    // ===============================
+    // 🔹 Export ke PDF
+    // ===============================
     function exportToPDF() {
-        const data = getTableData();
+        const data = getCheckedRowsData();
+
         if (data.length === 0) {
-            alert("Tidak ada data untuk diexport!");
+            alert("Silakan pilih minimal satu data dengan mencentang checkbox!");
             return;
         }
 
         const printWindow = window.open('', '', 'height=600,width=800');
 
         let htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Data Absensi Magang</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 30px;
-                    }
-                    .logo {
-                        font-size: 28px;
-                        font-weight: bold;
-                        color: #039BE5;
-                        margin-bottom: 5px;
-                    }
-                    .subtitle {
-                        color: #666;
-                        font-size: 14px;
-                    }
-                    h1 {
-                        text-align: center;
-                        color: #1A202C;
-                        margin: 20px 0;
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 20px;
-                    }
-                    th, td {
-                        border: 1px solid #ddd;
-                        padding: 8px;
-                        text-align: left;
-                        font-size: 12px;
-                    }
-                    th {
-                        background-color: #039BE5;
-                        color: white;
-                    }
-                    tr:nth-child(even) {
-                        background-color: #f9f9f9;
-                    }
-                    .footer {
-                        margin-top: 30px;
-                        text-align: center;
-                        font-size: 12px;
-                        color: #666;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <div class="logo">AMPEL</div>
-                    <div class="subtitle">Absensi Magang Polnes</div>
-                </div>
-                <h1>Data Absensi Magang</h1>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>TANGGAL</th>
-                            <th>NAMA LENGKAP</th>
-                            <th>USERNAME</th>
-                            <th>JAM MASUK</th>
-                            <th>JAM PULANG</th>
-                            <th>KETERANGAN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Data Absensi Magang</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .logo { font-size: 28px; font-weight: bold; color: #039BE5; margin-bottom: 5px; }
+                .subtitle { color: #666; font-size: 14px; }
+                h1 { text-align: center; color: #1A202C; margin: 20px 0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+                th { background-color: #039BE5; color: white; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo">AMPEL</div>
+                <div class="subtitle">Absensi Magang Pelindo</div>
+            </div>
+            <h1>Data Absensi Magang</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>TANGGAL</th>
+                        <th>NAMA LENGKAP</th>
+                        <th>JAM MASUK</th>
+                        <th>JAM PULANG</th>
+                        <th>KETERANGAN</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-        // ✅ Perbaikan mapping kolom agar sesuai dengan data
         data.forEach(peserta => {
             htmlContent += `
                 <tr>
                     <td>${peserta["No"]}</td>
                     <td>${peserta["Tanggal"]}</td>
                     <td>${peserta["Nama Lengkap"]}</td>
-                    <td>${peserta["Username"]}</td>
                     <td>${peserta["Jam Masuk"]}</td>
                     <td>${peserta["Jam Pulang"]}</td>
                     <td>${peserta["Keterangan"]}</td>
-                </tr>
-            `;
+                </tr>`;
         });
 
         htmlContent += `
-                    </tbody>
-                </table>
-                <div class="footer">
-                    Dicetak pada: ${new Date().toLocaleString('id-ID')}
-                </div>
-            </body>
-            </html>
-        `;
+                </tbody>
+            </table>
+            <div class="footer">
+                Dicetak pada: ${new Date().toLocaleString('id-ID')}
+            </div>
+        </body>
+        </html>`;
 
         printWindow.document.write(htmlContent);
         printWindow.document.close();
-
         printWindow.onload = function() {
             printWindow.print();
-            setTimeout(() => {
-                printWindow.close();
-            }, 300);
+            setTimeout(() => printWindow.close(), 300);
         };
 
         exportDropdown.classList.remove('show');
     }
 </script>
 
-<!-- Button Unduh  -->
+<!-- Button Edit -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Pilih semua tombol unduh
-        const unduhButtons = document.querySelectorAll("button.btn-unduh");
+        const modal = document.getElementById("editModal");
+        const cancelBtn = document.getElementById("cancelEdit");
+        const form = document.getElementById("editForm");
+        const tableBody = document.querySelector("#dataTable tbody");
+        const keteranganSelect = document.getElementById("editKeterangan");
+        let currentRow = null;
 
-        unduhButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                if (!row) return;
+        // ✅ Inisialisasi Flatpickr
+        const tanggalPicker = flatpickr("#editTanggal", {
+            dateFormat: "d F Y",
+            allowInput: true,
+            clickOpens: true,
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                }
+            },
+            onReady: function(_, __, instance) {
+                instance.input.placeholder = "Pilih tanggal absensi";
+            }
+        });
 
-                const cells = row.querySelectorAll("td");
-                const data = {
-                    no: cells[0]?.textContent.trim(),
-                    tanggal: cells[1].textContent.trim(),
-                    nama: cells[2].textContent.trim(),
-                    username: cells[3].textContent.trim(),
-                    masuk: cells[4].textContent.trim(),
-                    pulang: cells[5].textContent.trim(),
-                    keterangan: cells[6].textContent.trim(),
-                };
+        const jamMasukPicker = flatpickr("#editMasuk", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i:S",
+            time_24hr: true
+        });
 
-                const printWindow = window.open('', '', 'height=700,width=800');
-                printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Data Absensi Magang</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-                        h1 { text-align: center; color: #007BFF; margin-bottom: 30px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        td { padding: 10px; border: 1px solid #ccc; font-size: 13px; }
-                        .label { background: #007BFF; color: #fff; width: 35%; font-weight: bold; }
-                        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #777; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Data Absensi Magang</h1>
-                    <table>
-                        <tr><td class="label">Tanggal</td><td>${data.tanggal}</td></tr>
-                        <tr><td class="label">Nama Lengkap</td><td>${data.nama}</td></tr>
-                        <tr><td class="label">Username</td><td>${data.username}</td></tr>
-                        <tr><td class="label">Jam Masuk</td><td>${data.masuk}</td></tr>
-                        <tr><td class="label">Jam Pulang</td><td>${data.pulang}</td></tr>
-                        <tr><td class="label">Keterangan</td><td>${data.keterangan}</td></tr>
-                        
-                    </table>
-                    <div class="footer">
-                        Dicetak pada: ${new Date().toLocaleString('id-ID')} <br>
-                        © AMPEL - Absensi Magang Polnes
-                    </div>
-                </body>
-                </html>
-            `);
+        const jamPulangPicker = flatpickr("#editPulang", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i:S",
+            time_24hr: true
+        });
 
-                printWindow.document.close();
-                printWindow.onload = function() {
-                    printWindow.print();
-                    setTimeout(() => printWindow.close(), 500);
-                };
-            });
+        // ✅ Event delegation untuk tombol Edit
+        tableBody.addEventListener("click", function(e) {
+            const button = e.target.closest(".btn-success");
+            if (!button) return;
+
+            currentRow = button.closest("tr");
+
+            // Ambil data dari kolom tabel
+            const tanggal = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
+            const nama = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
+            const jamMasuk = currentRow.querySelector("td:nth-child(5)")?.textContent.trim() || "";
+            const jamPulang = currentRow.querySelector("td:nth-child(6)")?.textContent.trim() || "";
+            const keterangan = currentRow.querySelector("td:nth-child(7)")?.textContent.trim() || "";
+
+            // Isi form
+            document.getElementById("editNama").value = nama;
+            document.getElementById("editMasuk").value = jamMasuk;
+            document.getElementById("editPulang").value = jamPulang;
+            document.getElementById("editKeterangan").value = keterangan;
+
+            // ✅ Set tanggal ke Flatpickr
+            if (tanggal) {
+                function parseIndoDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+                            .toLowerCase()];
+                        const year = parseInt(parts[2]);
+                        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                            return new Date(year, month, day);
+                        }
+                    }
+                    return null;
+                }
+                const dateObj = parseIndoDate(tanggal);
+                if (dateObj) tanggalPicker.setDate(dateObj, true);
+            } else {
+                tanggalPicker.clear();
+            }
+
+            modal.classList.remove("hidden");
+        });
+
+        // ✅ Tombol Batal
+        cancelBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            form.reset();
+            tanggalPicker.clear();
+            currentRow = null;
+        });
+
+        // ✅ Submit form untuk update data tabel
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            if (currentRow) {
+                const tanggalValue = tanggalPicker.input.value.trim();
+                const namaValue = document.getElementById("editNama").value.trim();
+                const masukValue = document.getElementById("editMasuk").value.trim();
+                const pulangValue = document.getElementById("editPulang").value.trim();
+                const ketValue = document.getElementById("editKeterangan").value.trim();
+
+                // Update tabel
+                if (tanggalValue) currentRow.querySelector("td:nth-child(3)").textContent =
+                    tanggalValue;
+                currentRow.querySelector("td:nth-child(4)").textContent = namaValue;
+                currentRow.querySelector("td:nth-child(5)").textContent = masukValue;
+                currentRow.querySelector("td:nth-child(6)").textContent = pulangValue;
+                currentRow.querySelector("td:nth-child(7)").textContent = ketValue;
+
+                // Log untuk debug
+                const formData = new FormData(form);
+                console.log("Data diperbarui:");
+                for (let [key, val] of formData.entries()) {
+                    console.log(`${key}: ${val}`);
+                }
+
+                alert("Perubahan disimpan! (Data berhasil diperbarui)");
+            }
+
+            modal.classList.add("hidden");
+            form.reset();
+            tanggalPicker.clear();
+            currentRow = null;
         });
     });
 </script>
 
-<!-- Button Edit  -->
+
+
+<!-- Dropdown pindah halaman -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".btn-success");
-        const modal = document.getElementById("editModal");
-        const cancelBtn = document.getElementById("cancelEdit");
-        const form = document.getElementById("editForm");
+        const laporanSelect = document.getElementById("laporanSelect");
+        const currentPath = window.location.pathname;
 
-        // Event ketika klik tombol Edit
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                const cells = row.querySelectorAll("td");
-
-                // Isi form dari tabel
-                document.getElementById("editTanggal").value = cells[1].textContent.trim();
-                document.getElementById("editNama").value = cells[2].textContent.trim();
-                document.getElementById("editUsername").value = cells[3].textContent.trim();
-                document.getElementById("editMasuk").value = cells[4].textContent.trim();
-                document.getElementById("editPulang").value = cells[5].textContent.trim();
-
-                modal.classList.remove("hidden");
+        if (laporanSelect) {
+            laporanSelect.addEventListener("change", function() {
+                const selectedValue = this.value;
+                if (selectedValue) {
+                    window.location.href = selectedValue;
+                }
             });
-        });
 
-        // Tutup modal
-        cancelBtn.addEventListener("click", () => {
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
-        });
-
-        // Submit form (simulasi upload)
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            console.log("Data siap dikirim:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ':', pair[1]);
+            // Set selected option berdasarkan current path
+            for (const option of laporanSelect.options) {
+                if (currentPath.includes(option.value.replace('/', ''))) {
+                    option.selected = true;
+                    break;
+                }
             }
+        }
+    });
+</script>
 
-            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
-            modal.classList.add("hidden");
-            form.reset();
-            preview.classList.add("hidden");
+<!-- Button Delete  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.querySelector("#dataTable tbody");
+
+        // Fungsi untuk update nomor urut
+        function updateRowNumbers() {
+            const rows = tableBody.querySelectorAll("tr");
+            rows.forEach((row, index) => {
+                const numberCell = row.querySelector(
+                    "td:nth-child(2)"); // Kolom No (index 2 karena ada checkbox di index 1)
+                if (numberCell) {
+                    numberCell.textContent = (index + 1) + ".";
+                }
+            });
+        }
+
+        // Fungsi untuk update status checkbox "Select All"
+        function updateCheckAllStatus() {
+            const checkAll = document.querySelector("#checkAll");
+            const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+            const checkedBoxes = document.querySelectorAll(".row-checkbox:checked");
+
+            if (checkAll && rowCheckboxes.length > 0) {
+                checkAll.checked = checkedBoxes.length === rowCheckboxes.length;
+            }
+        }
+
+        // Expose fungsi ke window agar bisa dipanggil dari script lain
+        window.updateRowNumbers = updateRowNumbers;
+        window.updateCheckAllStatus = updateCheckAllStatus;
+
+        // Event Delegation: Delete Button
+        tableBody.addEventListener("click", function(e) {
+            const target = e.target.closest("button");
+            if (!target) return;
+
+            // Tombol Hapus (btn-primary dengan icon trash)
+            if (target.classList.contains("btn-primary")) {
+                const row = target.closest("tr");
+
+                if (confirm("Yakin ingin menghapus data ini?")) {
+                    row.remove();
+
+                    // Update nomor urut setelah hapus
+                    updateRowNumbers();
+
+                    // Update status checkbox "Select All"
+                    updateCheckAllStatus();
+
+                    // Cek apakah tabel kosong
+                    const remainingRows = tableBody.querySelectorAll("tr");
+                    if (remainingRows.length === 0) {
+                        // Optional: Tambahkan pesan jika tabel kosong
+                        const emptyRow = document.createElement("tr");
+                        emptyRow.innerHTML = `
+                            <td colspan="8" style="text-align: center; padding: 20px; color: #666;">
+                                Tidak ada data absensi
+                            </td>
+                        `;
+                        tableBody.appendChild(emptyRow);
+                    }
+                }
+            }
+        });
+
+        // Optional: Tambahkan event listener untuk checkbox "Select All"
+        const checkAll = document.querySelector("#checkAll");
+        if (checkAll) {
+            checkAll.addEventListener("change", function() {
+                const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+                rowCheckboxes.forEach(cb => cb.checked = checkAll.checked);
+            });
+        }
+
+        // Optional: Update status "Select All" saat individual checkbox diubah
+        tableBody.addEventListener("change", function(e) {
+            if (e.target.classList.contains("row-checkbox")) {
+                updateCheckAllStatus();
+            }
         });
     });
+</script>
 
-    flatpickr("#editTanggal", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-        defaultDate: ["02-05-2026"]
-    });
+<!-- checkbox -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkAll = document.getElementById('checkAll');
+        const table = document.querySelector('table');
 
-    flatpickr("#editMasuk", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        defaultDate: "13:45"
-    });
+        if (!checkAll || !table) return;
 
-    flatpickr("#editPulang", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        defaultDate: "13:45"
+        // 🔹 Fungsi ambil ulang semua checkbox baris yang ada saat ini
+        function getRowCheckboxes() {
+            return table.querySelectorAll('.row-checkbox');
+        }
+
+        // 🔹 Saat checkbox utama di header diubah
+        checkAll.addEventListener('change', function() {
+            const rowCheckboxes = getRowCheckboxes();
+            rowCheckboxes.forEach(cb => cb.checked = this.checked);
+            checkAll.indeterminate = false;
+        });
+
+        // 🔹 Delegasi event untuk mendeteksi perubahan di checkbox baris
+        table.addEventListener('change', function(e) {
+            if (!e.target.classList.contains('row-checkbox')) return;
+
+            const rowCheckboxes = getRowCheckboxes();
+            const total = rowCheckboxes.length;
+            const checked = Array.from(rowCheckboxes).filter(c => c.checked).length;
+
+            if (checked === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checked === total) {
+                checkAll.checked = true;
+                checkAll.indeterminate = false;
+            } else {
+                checkAll.checked = false;
+                checkAll.indeterminate = true;
+            }
+        });
     });
 </script>
 
