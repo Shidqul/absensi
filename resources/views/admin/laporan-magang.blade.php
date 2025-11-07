@@ -924,14 +924,12 @@
         const tableBody = document.querySelector("#dataTable tbody");
         let currentRow = null;
 
-        // ✅ Inisialisasi Flatpickr LANGSUNG di sini
+        // ✅ Inisialisasi Flatpickr LANGSUNG di sini (disesuaikan dari script kedua, tanpa altInput untuk kesederhanaan)
         const flatpickrInstance = flatpickr("#editTanggal", {
             mode: "range",
-            dateFormat: "d-m-Y",
+            dateFormat: "d F Y",
             allowInput: true,
             clickOpens: true,
-            altInput: true,
-            altFormat: "d F Y",
             locale: {
                 firstDayOfWeek: 1,
                 rangeSeparator: ' - ',
@@ -948,31 +946,36 @@
                     ]
                 }
             },
-            onReady: function(selectedDates, dateStr, instance) {
-                instance.altInput.placeholder = "1 Januari 2026 - 31 Desember 2026";
+            onReady: function(_, __, instance) {
+                instance.input.placeholder = "Pilih tanggal absensi";
             }
         });
 
-        // ✅ Event delegation untuk tombol Edit (lebih efisien)
+        // ✅ Event delegation untuk tombol Edit dengan class btn-success
         tableBody.addEventListener("click", function(e) {
+            // Cari tombol dengan class btn-success (bisa klik button atau icon di dalamnya)
             const button = e.target.closest(".btn-success");
             if (!button) return;
 
             currentRow = button.closest("tr");
-            const cells = currentRow.querySelectorAll("td");
 
-            // Bersihkan whitespace berlebih di deskripsi
-            let deskripsi = cells[4]?.innerText || cells[4]?.textContent || "";
-            deskripsi = deskripsi.split(/\s+/).filter(word => word).join(' ');
+            // Ambil data dari kolom tabel (disesuaikan untuk tabel tanpa subjek: nth-child(3) tanggal, (4) nama, (5) deskripsi)
+            const tanggal = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
+            const nama = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
 
-            // Ambil nilai tanggal dari tabel
-            const tanggal = cells[2]?.textContent.trim() || "";
+            // Ambil deskripsi dan bersihkan whitespace berlebih (metode agresif dari script kedua)
+            const deskripsiCell = currentRow.querySelector("td:nth-child(5)");
+            let deskripsi = deskripsiCell?.innerText || deskripsiCell?.textContent || "";
+            deskripsi = deskripsi
+                .split(/\s+/) // Split by any whitespace
+                .filter(word => word) // Remove empty strings
+                .join(' '); // Join with single space
 
-            // Isi form dari tabel
-            document.getElementById("editNama").value = cells[3]?.textContent.trim() || "";
+            // Isi nilai ke form modal (tanpa subjek)
+            document.getElementById("editNama").value = nama;
             document.getElementById("editDeskripsi").value = deskripsi;
 
-            // ✅ Set nilai Flatpickr dengan parsing tanggal Indonesia
+            // ✅ Set nilai Flatpickr dengan parsing tanggal yang lebih robust dari script kedua
             if (tanggal && tanggal.includes(' - ')) {
                 const dates = tanggal.split(' - ').map(d => d.trim());
 
@@ -1009,6 +1012,42 @@
                 if (startDate && endDate) {
                     flatpickrInstance.setDate([startDate, endDate], true);
                 }
+            } else if (tanggal) {
+                // Jika tanggal tunggal (bukan range) - fitur tambahan dari script kedua
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    // Format: "27 april 2026" atau "29 april 2026"
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+                            .toLowerCase()];
+                        const year = parseInt(parts[2]);
+                        if (month !== undefined) {
+                            return new Date(year, month, day);
+                        }
+                    }
+                    return null;
+                }
+
+                const singleDate = parseIndonesianDate(tanggal);
+                if (singleDate) {
+                    flatpickrInstance.setDate(singleDate, true);
+                }
             } else {
                 flatpickrInstance.clear();
             }
@@ -1029,12 +1068,17 @@
             e.preventDefault();
 
             if (currentRow) {
-                const cells = currentRow.querySelectorAll("td");
+                // ✅ Ambil nilai tanggal dari Flatpickr instance, bukan dari input langsung (dari script kedua)
+                const tanggalValue = flatpickrInstance.input.value.trim();
 
-                // Update data di tabel
-                cells[2].textContent = flatpickrInstance.altInput.value.trim();
-                cells[3].textContent = document.getElementById("editNama").value.trim();
-                cells[4].textContent = document.getElementById("editDeskripsi").value.trim();
+                // Update data di tabel (disesuaikan untuk tabel tanpa subjek: nth-child(3) tanggal, (4) nama, (5) deskripsi)
+                if (tanggalValue) {
+                    currentRow.querySelector("td:nth-child(3)").textContent = tanggalValue;
+                }
+                currentRow.querySelector("td:nth-child(4)").textContent = document.getElementById(
+                    "editNama").value.trim();
+                currentRow.querySelector("td:nth-child(5)").textContent = document.getElementById(
+                    "editDeskripsi").value.trim();
 
                 // Log data untuk debugging (simulasi kirim ke backend)
                 const formData = new FormData(form);
@@ -1053,6 +1097,7 @@
         });
     });
 </script>
+
 
 <!-- Button Delete  -->
 <script>
