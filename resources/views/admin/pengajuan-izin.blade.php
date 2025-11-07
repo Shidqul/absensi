@@ -132,6 +132,14 @@
             background: #f9f9f9;
         }
 
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4a58ad;
+            /* biru */
+            cursor: pointer;
+        }
+
         /* Kontainer tombol di kolom AKSI */
         .action-buttons {
             display: flex;
@@ -141,49 +149,30 @@
             /* Jarak antar tombol */
         }
 
-        /* Tombol umum di tabel */
+        /* ✅ Ukuran tombol aksi seragam */
         .action-buttons .btn {
+            width: 36px;
+            height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 500;
             border-radius: 6px;
-            padding: 6px 12px;
-            transition: all 0.2s ease;
-            /* teks putih */
-            color: #fff !important;
-
+            transition: 0.2s;
+            color: #fff;
+            padding: 0;
+            /* hilangkan padding agar ukuran fix */
         }
 
-        /* Ikon SVG agar sejajar dengan teks */
-        .action-buttons .btn svg {
-            margin-right: 6px;
-            vertical-align: middle;
-            /* ikon putih */
-            fill: #fff;
-        }
-
-        /* Warna tombol Edit (hijau) */
+        /* Warna tombol edit */
         .action-buttons .btn-success {
-            background-color: #4FD283;
-            border-color: none;
+            background-color: #ffc107;
+            /* warna kuning */
         }
 
-        .action-buttons .btn-success:hover {
-            background-color: #4FD283;
-            border-color: none;
-        }
-
-        /* Warna tombol Unduh (biru) */
+        /* Warna tombol hapus */
         .action-buttons .btn-primary {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
-        }
-
-        .action-buttons .btn-primary:hover {
-            background-color: #13A4EC;
-            border-color: #13A4EC;
+            background-color: #dc3545;
+            /* warna merah */
         }
 
         /* Responsive - jaga jarak tombol di layar kecil */
@@ -217,6 +206,27 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
+
+        /* blur dan inisiasi */
+        #editModal {
+            backdrop-filter: blur(3px);
+        }
+
+        #editModal .rounded-xl {
+            animation: scaleIn 0.25s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 
 </head>
@@ -238,11 +248,6 @@
                 <div>
                     <label class="block text-gray-700 mb-1">Nama Lengkap</label>
                     <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
-                </div>
-                <!-- Username -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Username</label>
-                    <input type="text" id="editUsername" class="w-full border rounded-md px-3 py-2" />
                 </div>
                 <!-- Subjek -->
                 <div>
@@ -329,7 +334,7 @@
         </aside>
         <main class="flex-1 p-8">
             <!-- Header: Judul & Tombol Export -->
-            <h1 class="text-xl text-text-light dark:text-text-dark font-semibold mb-6">Laporan</h1>
+            <h1 class="text-xl text-text-light dark:text-text-dark font-semibold mb-6">Pengajuan Izin</h1>
             <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow">
                 <div class="bg-indigo-900 text-white p-4">
                     <h2 class="text-xl font-semibold">Laporan Pengajuan Izin</h2>
@@ -340,8 +345,8 @@
                             <a class="relative">
                                 <select id="laporanSelect"
                                     class="w-48 appearance-none bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-md py-2 pl-3 pr-10 text-text-light dark:text-text-dark focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
-                                    <option value="/laporan">Pengajuan Izin</option>
-                                    <option value="/laporan">Laporan Magang</option>
+                                    <option value="dataabsensi">Data Absensi</option>
+                                    <option value="pengajuanizin">Pengajuan Izin</option>
                                 </select>
                             </a>
                             <!-- Filter & Search -->
@@ -397,33 +402,29 @@
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
-                        <table>
+                        <table id="dataTable">
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" class="checkbox" id="checkAll"></th>
                                     <th>No.</th>
                                     <th>TANGGAL</th>
                                     <th>NAMA LENGKAP</th>
-                                    <th>USERNAME</th>
                                     <th>SUBJEK</th>
-                                    <th>DESKRIPSI</th>
-                                    <th>WAKTU KIRIM</th>
-                                    <th>STATUS</th>
-                                    <th>AKSI</th>
+                                    <th class="text-center">DESKRIPSI</th>
+                                    <th class="text-center">AKSI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>1.</td>
-                                    <td>26/04/2026</td>
+                                    <td>26 april 2026</td>
                                     <td>Ade Setiawan</td>
-                                    <td>adesetiawan13</td>
                                     <td>Izin Cuti Mengurus SIM A</td>
                                     <td class="description-cell">
                                         Selamat pagi, Saya Ade Setiawan, mahasiswa Universitas Tunggal Jaya, Divisi IT,
                                         mengajukan izin pada hari ini dikarena...
                                     </td>
-                                    <td>07:06:15</td>
-                                    <td><span class="status-badge">DITERIMA</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol Edit -->
@@ -438,38 +439,30 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>2</td>
-                                    <td>27/04/2026</td>
+                                    <td>27 april 2026</td>
                                     <td>Bagus Putra Irwanto</td>
-                                    <td>bagusputra18</td>
                                     <td>Izin Cuti Kakek Meninggal</td>
                                     <td class="description-cell">
                                         Selamat pagi,Saya Bagus Putra Irwanto, mahasiswa Universitas Pelita, Divisi IT,
                                         mengajukan izin pada hari ini dikarena...
                                     </td>
-                                    <td>07:35:15</td>
-                                    <td><span class="status-badge">DITERIMA</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol Edit -->
@@ -484,38 +477,30 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
                                     <td>3</td>
-                                    <td>29/04/2026</td>
+                                    <td>29 april 2026</td>
                                     <td>Friska Dewi Gerania</td>
-                                    <td>friskadewi122</td>
                                     <td>Izin Cuti Sakit</td>
                                     <td class="description-cell">
                                         Selamat pagi,Saya Friska Dewi Gerania, mahasiswa Universitas Mawar, Divisi
                                         Keuangan,mengajukan izin pada hari ini dikarena...
                                     </td>
-                                    <td>07:18:15</td>
-                                    <td><span class="status-badge">DITERIMA</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol Edit -->
@@ -530,22 +515,16 @@
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
                                                     </path>
                                                 </svg>
-                                                Edit
                                             </button>
 
-                                            <!-- Tombol Unduh -->
-                                            <button type="button" class="btn btn-primary btn-unduh">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-download me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5">
-                                                    </path>
-                                                    <path
-                                                        d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
-                                                Unduh
                                             </button>
                                         </div>
                                     </td>
@@ -582,15 +561,16 @@
             laporanSelect.addEventListener("change", function() {
                 const selectedValue = this.value;
                 if (selectedValue) {
-                    window.location.href = selectedValue; // pindah halaman
+                    window.location.href = selectedValue;
                 }
             });
-        }
 
-        for (const option of select.options) {
-            if (option.value === currentPath) {
-                option.selected = true;
-                break;
+            // Set selected option berdasarkan current path
+            for (const option of laporanSelect.options) {
+                if (currentPath.includes(option.value.replace('/', ''))) {
+                    option.selected = true;
+                    break;
+                }
             }
         }
     });
@@ -622,17 +602,22 @@
 
             data.forEach((row, i) => {
                 const clone = row.cloneNode(true);
-                const firstCell = clone.querySelector("td:first-child");
-                if (firstCell) firstCell.textContent = i + 1; // update nomor urut
+
+                // Update nomor urut di kolom ke-2 (bukan kolom pertama yang berisi checkbox)
+                const numberCell = clone.querySelector("td:nth-child(2)");
+                if (numberCell) {
+                    numberCell.textContent = (i + 1) + ".";
+                }
+
                 table.appendChild(clone);
             });
         }
 
-        // 🔹 Filter berdasarkan nama (kolom ke-2)
+        // 🔹 Filter berdasarkan nama (kolom ke-4)
         function filterTable() {
             const keyword = searchInput.value.toLowerCase();
             const filtered = currentRows.filter(row => {
-                const nameCell = row.children[2]; // kolom nama
+                const nameCell = row.children[3]; // kolom nama (index ke-3)
                 if (!nameCell) return false;
                 return nameCell.textContent.toLowerCase().includes(keyword);
             });
@@ -1007,126 +992,321 @@
     }
 </script>
 
-<!-- Button Unduh  -->
+
+<!-- Button Edit --> kedua
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Pilih semua tombol unduh
-        const unduhButtons = document.querySelectorAll("button.btn-unduh");
-
-        unduhButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                if (!row) return;
-
-                const cells = row.querySelectorAll("td");
-                const data = {
-                    no: cells[0]?.textContent.trim(),
-                    tanggal: cells[1].textContent.trim(),
-                    nama: cells[2].textContent.trim(),
-                    username: cells[3].textContent.trim(),
-                    subjek: cells[4].textContent.trim(),
-                    deskripsi: cells[5].textContent.trim(),
-                    waktu: cells[6].textContent.trim(),
-                    status: cells[7].textContent.trim(),
-                };
-
-                const printWindow = window.open('', '', 'height=700,width=800');
-                printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Laporan Izin</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-                        h1 { text-align: center; color: #007BFF; margin-bottom: 30px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        td { padding: 10px; border: 1px solid #ccc; font-size: 13px; }
-                        .label { background: #007BFF; color: #fff; width: 35%; font-weight: bold; }
-                        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #777; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Laporan Izin</h1>
-                    <table>
-                        <tr><td class="label">Tanggal</td><td>${data.tanggal}</td></tr>
-                        <tr><td class="label">Nama Lengkap</td><td>${data.nama}</td></tr>
-                        <tr><td class="label">Username</td><td>${data.username}</td></tr>
-                        <tr><td class="label">Subjek</td><td>${data.subjek}</td></tr>
-                        <tr><td class="label">Deskripsi</td><td>${data.deskripsi}</td></tr>
-                        <tr><td class="label">Waktu</td><td>${data.waktu}</td></tr>
-                        <tr><td class="label">Status</td><td>${data.status}</td></tr>
-                    </table>
-                    <div class="footer">
-                        Dicetak pada: ${new Date().toLocaleString('id-ID')} <br>
-                        © AMPEL - Absensi Magang Polnes
-                    </div>
-                </body>
-                </html>
-            `);
-
-                printWindow.document.close();
-                printWindow.onload = function() {
-                    printWindow.print();
-                    setTimeout(() => printWindow.close(), 500);
-                };
-            });
-        });
-    });
-</script>
-
-<!-- Button Edit  -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const editButtons = document.querySelectorAll(".btn-success");
         const modal = document.getElementById("editModal");
         const cancelBtn = document.getElementById("cancelEdit");
         const form = document.getElementById("editForm");
+        const tableBody = document.querySelector("#dataTable tbody");
+        let currentRow = null;
 
-        editButtons.forEach(button => {
-            button.addEventListener("click", function() {
-                const row = this.closest("tr");
-                const cells = row.querySelectorAll("td");
-
-                // Ambil teks deskripsi dan bersihkan SEMUA whitespace
-                let deskripsi = cells[5].innerText || cells[5].textContent;
-
-                // Metode pembersihan SUPER AGRESIF:
-                // 1. Split berdasarkan whitespace apapun (spasi, tab, newline)
-                // 2. Filter untuk buang string kosong
-                // 3. Join kembali dengan single space
-                deskripsi = deskripsi
-                    .split(/\s+/) // Split by any whitespace
-                    .filter(word => word) // Remove empty strings
-                    .join(' '); // Join with single space
-
-                // Isi data ke form
-                document.getElementById("editTanggal").value = cells[1].textContent.trim();
-                document.getElementById("editNama").value = cells[2].textContent.trim();
-                document.getElementById("editUsername").value = cells[3].textContent.trim();
-                document.getElementById("editSubjek").value = cells[4].textContent.trim();
-                document.getElementById("editDeskripsi").value = deskripsi;
-
-                modal.classList.remove("hidden");
-            });
+        // ✅ Inisialisasi Flatpickr LANGSUNG di sini
+        const flatpickrInstance = flatpickr("#editTanggal", {
+            mode: "range",
+            dateFormat: "d F Y",
+            allowInput: true,
+            clickOpens: true,
+            locale: {
+                firstDayOfWeek: 1,
+                rangeSeparator: ' - ',
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                }
+            },
+            onReady: function(_, __, instance) {
+                instance.input.placeholder = "Pilih tanggal absensi";
+            }
         });
 
+        // ✅ Event delegation untuk tombol Edit dengan class btn-success
+        tableBody.addEventListener("click", function(e) {
+            // Cari tombol dengan class btn-success (bisa klik button atau icon di dalamnya)
+            const button = e.target.closest(".btn-success");
+            if (!button) return;
+
+            currentRow = button.closest("tr");
+
+            // Ambil data dari kolom tabel
+            const tanggal = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
+            const nama = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
+            const subjek = currentRow.querySelector("td:nth-child(5)")?.textContent.trim() || "";
+
+            // Ambil deskripsi dan bersihkan whitespace berlebih
+            const deskripsiCell = currentRow.querySelector("td:nth-child(6)");
+            let deskripsi = deskripsiCell?.innerText || deskripsiCell?.textContent || "";
+
+            // Metode pembersihan SUPER AGRESIF
+            deskripsi = deskripsi
+                .split(/\s+/) // Split by any whitespace
+                .filter(word => word) // Remove empty strings
+                .join(' '); // Join with single space
+
+            // Isi nilai ke form modal
+            document.getElementById("editNama").value = nama;
+            document.getElementById("editSubjek").value = subjek;
+            document.getElementById("editDeskripsi").value = deskripsi;
+
+            // ✅ Set nilai Flatpickr dengan format yang benar
+            if (tanggal && tanggal.includes(' - ')) {
+                const dates = tanggal.split(' - ').map(d => d.trim());
+
+                // Parse tanggal Indonesia ke Date object
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1]];
+                        const year = parseInt(parts[2]);
+                        return new Date(year, month, day);
+                    }
+                    return null;
+                }
+
+                const startDate = parseIndonesianDate(dates[0]);
+                const endDate = parseIndonesianDate(dates[1]);
+
+                if (startDate && endDate) {
+                    flatpickrInstance.setDate([startDate, endDate], true);
+                }
+            } else if (tanggal) {
+                // Jika tanggal tunggal (bukan range)
+                function parseIndonesianDate(dateStr) {
+                    const months = {
+                        'Januari': 0,
+                        'Februari': 1,
+                        'Maret': 2,
+                        'April': 3,
+                        'Mei': 4,
+                        'Juni': 5,
+                        'Juli': 6,
+                        'Agustus': 7,
+                        'September': 8,
+                        'Oktober': 9,
+                        'November': 10,
+                        'Desember': 11
+                    };
+
+                    // Format: "27 april 2026" atau "29 april 2026"
+                    const parts = dateStr.split(' ');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
+                            .toLowerCase()];
+                        const year = parseInt(parts[2]);
+                        if (month !== undefined) {
+                            return new Date(year, month, day);
+                        }
+                    }
+                    return null;
+                }
+
+                const singleDate = parseIndonesianDate(tanggal);
+                if (singleDate) {
+                    flatpickrInstance.setDate(singleDate, true);
+                }
+            } else {
+                flatpickrInstance.clear();
+            }
+
+            modal.classList.remove("hidden");
+        });
+
+        // Tombol batal
         cancelBtn.addEventListener("click", () => {
             modal.classList.add("hidden");
+            form.reset();
+            flatpickrInstance.clear();
+            currentRow = null;
         });
 
+        // Submit form - Update data di tabel
         form.addEventListener("submit", function(e) {
             e.preventDefault();
-            alert("Perubahan disimpan! (Simulasikan kirim data ke backend)");
-            modal.classList.add("hidden");
-        });
-    });
 
-    flatpickr("#editTanggal", {
-        mode: "range",
-        dateFormat: "d-m-Y",
-        defaultDate: ["26-04-2026"]
+            if (currentRow) {
+                // ✅ Ambil nilai tanggal dari Flatpickr instance, bukan dari input langsung
+                const tanggalValue = flatpickrInstance.input.value.trim();
+
+                // Update data di tabel
+                if (tanggalValue) {
+                    currentRow.querySelector("td:nth-child(3)").textContent = tanggalValue;
+                }
+                currentRow.querySelector("td:nth-child(4)").textContent = document.getElementById(
+                    "editNama").value.trim();
+                currentRow.querySelector("td:nth-child(5)").textContent = document.getElementById(
+                    "editSubjek").value.trim();
+                currentRow.querySelector("td:nth-child(6)").textContent = document.getElementById(
+                    "editDeskripsi").value.trim();
+
+
+                // Log data untuk debugging (simulasi kirim ke backend)
+                const formData = new FormData(form);
+                console.log("Data siap dikirim:");
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ':', pair[1]);
+                }
+
+                alert("Perubahan disimpan! (Data berhasil diperbarui)");
+            }
+
+            modal.classList.add("hidden");
+            form.reset();
+            flatpickrInstance.clear();
+            currentRow = null;
+        });
     });
 </script>
 
+<!-- checkbox -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkAll = document.getElementById('checkAll');
+        const table = document.querySelector('table');
+
+        if (!checkAll || !table) return;
+
+        // 🔹 Fungsi ambil ulang semua checkbox baris yang ada saat ini
+        function getRowCheckboxes() {
+            return table.querySelectorAll('.row-checkbox');
+        }
+
+        // 🔹 Saat checkbox utama di header diubah
+        checkAll.addEventListener('change', function() {
+            const rowCheckboxes = getRowCheckboxes();
+            rowCheckboxes.forEach(cb => cb.checked = this.checked);
+            checkAll.indeterminate = false;
+        });
+
+        // 🔹 Delegasi event untuk mendeteksi perubahan di checkbox baris
+        table.addEventListener('change', function(e) {
+            if (!e.target.classList.contains('row-checkbox')) return;
+
+            const rowCheckboxes = getRowCheckboxes();
+            const total = rowCheckboxes.length;
+            const checked = Array.from(rowCheckboxes).filter(c => c.checked).length;
+
+            if (checked === 0) {
+                checkAll.checked = false;
+                checkAll.indeterminate = false;
+            } else if (checked === total) {
+                checkAll.checked = true;
+                checkAll.indeterminate = false;
+            } else {
+                checkAll.checked = false;
+                checkAll.indeterminate = true;
+            }
+        });
+    });
+</script>
+
+<!-- Button Delete  -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.querySelector("#dataTable tbody");
+
+        // Fungsi untuk update nomor urut
+        function updateRowNumbers() {
+            const rows = tableBody.querySelectorAll("tr");
+            rows.forEach((row, index) => {
+                const numberCell = row.querySelector(
+                    "td:nth-child(2)"); // Kolom No (index 2 karena ada checkbox di index 1)
+                if (numberCell) {
+                    numberCell.textContent = (index + 1) + ".";
+                }
+            });
+        }
+
+        // Fungsi untuk update status checkbox "Select All"
+        function updateCheckAllStatus() {
+            const checkAll = document.querySelector("#checkAll");
+            const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+            const checkedBoxes = document.querySelectorAll(".row-checkbox:checked");
+
+            if (checkAll && rowCheckboxes.length > 0) {
+                checkAll.checked = checkedBoxes.length === rowCheckboxes.length;
+            }
+        }
+
+        // Expose fungsi ke window agar bisa dipanggil dari script lain
+        window.updateRowNumbers = updateRowNumbers;
+        window.updateCheckAllStatus = updateCheckAllStatus;
+
+        // Event Delegation: Delete Button
+        tableBody.addEventListener("click", function(e) {
+            const target = e.target.closest("button");
+            if (!target) return;
+
+            // Tombol Hapus (btn-primary dengan icon trash)
+            if (target.classList.contains("btn-primary")) {
+                const row = target.closest("tr");
+
+                if (confirm("Yakin ingin menghapus data ini?")) {
+                    row.remove();
+
+                    // Update nomor urut setelah hapus
+                    updateRowNumbers();
+
+                    // Update status checkbox "Select All"
+                    updateCheckAllStatus();
+
+                    // Cek apakah tabel kosong
+                    const remainingRows = tableBody.querySelectorAll("tr");
+                    if (remainingRows.length === 0) {
+                        // Optional: Tambahkan pesan jika tabel kosong
+                        const emptyRow = document.createElement("tr");
+                        emptyRow.innerHTML = `
+                            <td colspan="8" style="text-align: center; padding: 20px; color: #666;">
+                                Tidak ada data absensi
+                            </td>
+                        `;
+                        tableBody.appendChild(emptyRow);
+                    }
+                }
+            }
+        });
+
+        // Optional: Tambahkan event listener untuk checkbox "Select All"
+        const checkAll = document.querySelector("#checkAll");
+        if (checkAll) {
+            checkAll.addEventListener("change", function() {
+                const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+                rowCheckboxes.forEach(cb => cb.checked = checkAll.checked);
+            });
+        }
+
+        // Optional: Update status "Select All" saat individual checkbox diubah
+        tableBody.addEventListener("change", function(e) {
+            if (e.target.classList.contains("row-checkbox")) {
+                updateCheckAllStatus();
+            }
+        });
+    });
+</script>
 
 </html>
