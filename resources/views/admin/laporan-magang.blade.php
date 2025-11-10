@@ -330,7 +330,7 @@
             <!-- Header: Judul & Tombol Export -->
             <h1 class="text-xl text-text-light dark:text-text-dark font-semibold mb-6">Laporan</h1>
             <div class="bg-surface-light dark:bg-surface-dark rounded-lg shadow">
-                <div class="bg-indigo-900 text-white p-4">
+                <div class="bg-indigo-900 text-white p-4" style="border-radius: 10px 10px 0 0;">
                     <h2 class="text-xl font-semibold">Laporan Peserta Magang</h2>
                 </div>
                 <div class="p-6">
@@ -803,69 +803,176 @@
             return;
         }
 
-        const printWindow = window.open('', '', 'height=600,width=800');
+        const printWindow = window.open('', '', 'height=900,width=700');
 
         let htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Laporan Magang</title>
-            <style>
-                body { font-family: Arial, sans-serif; padding: 20px; }
-                .header { text-align: center; margin-bottom: 30px; }
-                .logo { font-size: 28px; font-weight: bold; color: #039BE5; margin-bottom: 5px; }
-                .subtitle { color: #666; font-size: 14px; }
-                h1 { text-align: center; color: #1A202C; margin: 20px 0; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-                th { background-color: #039BE5; color: white; }
-                tr:nth-child(even) { background-color: #f9f9f9; }
-                .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <div class="logo">AMPEL</div>
-                <div class="subtitle">Laporan Magang Pelindo</div>
-            </div>
-            <h1>Laporan Magang</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Nama Lengkap</th>
-                        <th>Deskripsi</th>
-                        <th>Foto Kegiatan</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Laporan Magang</title>
+        <style>
+            @page { size: A4; margin: 2cm; }
+            body { 
+                font-family: Arial, sans-serif; 
+                padding: 0; 
+                margin: 0; 
+                color: #000; 
+            }
+            .header { 
+                text-align: center; 
+                line-height: 1.4; 
+                margin-bottom: 20px; 
+            }
+            .header .logo { 
+                font-size: 20px; 
+                color: #007bff; 
+                font-weight: bold; 
+            }
+            .header .sub { 
+                font-size: 12px; 
+                color: #555; 
+                margin-bottom: 10px; 
+            }
+            .title { 
+                text-align: center; 
+                font-weight: bold; 
+                font-size: 18px; 
+                margin-bottom: 25px; 
+            }
 
-        data.forEach(peserta => {
-            htmlContent += `
+            /* Info Table */
+            .info-table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-bottom: 15px; 
+                font-size: 12px;
+            }
+            .info-table td { 
+                padding: 4px 8px; 
+            }
+            .info-table td:first-child, 
+            .info-table td:nth-child(4) { 
+                width: 80px; 
+            }
+
+            /* Main Data Table */
+            table.report {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                font-size: 12px;
+            }
+            table.report th, 
+            table.report td {
+                border: 1px solid #000;
+                padding: 6px;
+                text-align: left;
+            }
+            table.report th {
+                text-align: center;
+                font-weight: bold;
+            }
+            table.report td:nth-child(1),
+            table.report td:nth-child(2) {
+                text-align: center;
+            }
+
+            /* Footer */
+            .footer {
+                text-align: center;
+                font-size: 11px;
+                color: #444;
+                margin-top: 10px;
+            }
+
+            /* Signature Section */
+            .sign-section {
+                width: 100%;
+                margin-top: 60px;
+                text-align: center;
+                font-size: 12px;
+            }
+            .sign-col {
+                display: inline-block;
+                width: 45%;
+                vertical-align: top;
+            }
+            .sign-line {
+                border-top: 1px solid #000;
+                width: 60%;
+                margin: 40px auto 5px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="logo">AMPEL</div>
+            <div class="sub">Laporan Magang Pelindo</div>
+        </div>
+
+        <div class="title">Laporan Magang</div>
+
+        <table class="info-table">
+            <tr>
+                <td>DIVISI</td><td>:</td><td></td>
+                <td>NAMA</td><td>:</td><td></td>
+            </tr>
+            <tr>
+                <td>MENTOR</td><td>:</td><td></td>
+                <td>UNIVERSITAS</td><td>:</td><td></td>
+            </tr>
+            <tr>
+                <td>NIPP</td><td>:</td><td colspan="4"></td>
+            </tr>
+        </table>
+
+        <table class="report">
+            <thead>
                 <tr>
-                    <td>${peserta["No"]}</td>
-                    <td>${peserta["Tanggal"]}</td>
-                    <td>${peserta["Nama Lengkap"]}</td>
-                    <td>${peserta["Deskripsi"]}</td>
-                    <td>${peserta["Foto Kegiatan"]}</td>
-                </tr>`;
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Deskripsi</th>
+                    <th>Foto Kegiatan</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        data.forEach((row, i) => {
+            htmlContent += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${row["Tanggal"]}</td>
+                <td>${row["Deskripsi"]}</td>
+                <td>${row["Foto Kegiatan"]}</td>
+            </tr>`;
         });
 
         htmlContent += `
-                </tbody>
-            </table>
-            <div class="footer">
-                Dicetak pada: ${new Date().toLocaleString('id-ID')}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            Dicetak pada: ${new Date().toLocaleString('id-ID')}
+        </div>
+
+        <div class="sign-section">
+            <div class="sign-col">
+                <div class="sign-line"></div>
+                Pemagang
             </div>
-        </body>
-        </html>`;
+            <div class="sign-col">
+                <div class="sign-line"></div>
+                Pembimbing Lapangan
+            </div>
+        </div>
+    </body>
+    </html>`;
 
         printWindow.document.write(htmlContent);
         printWindow.document.close();
         printWindow.onload = function() {
             printWindow.print();
-            setTimeout(() => printWindow.close(), 300);
+            setTimeout(() => printWindow.close(), 500);
         };
 
         exportDropdown.classList.remove('show');
