@@ -376,8 +376,8 @@
                                 </select>
                             </a>
                             <!-- Filter & Search -->
-                            <input type="date" value="2026-04-26">
-                            <i class="fas fa-filter mb-4" style="color: #666; cursor: pointer;"></i>
+                            <input type="date" id="filterDate">
+                            <i class="fas fa-filter mb-4" id="filterIcon" style="color: #666; cursor: pointer;"></i>
                             <form class="d-flex" role="search">
                                 <input class="form-control me-2" type="search" placeholder="Masukkan Nama"
                                     aria-label="Search" />
@@ -629,90 +629,78 @@
 <!-- Filter Tanggal -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const dateInput = document.querySelector('input[type="date"]');
-        const filterIcon = document.querySelector('.fa-filter');
-        const tableBody = document.querySelector("table tbody");
+        const dateInput = document.getElementById('filterDate');
+        const filterIcon = document.getElementById('filterIcon');
+        const tableBody = document.querySelector("#dataTable tbody");
         const allRows = Array.from(tableBody.querySelectorAll("tr"));
 
-        // 🔹 Fungsi Filter Berdasarkan Tanggal
+        // Daftar nama bulan dalam bahasa Indonesia (huruf kecil agar mudah dibandingkan)
+        const bulanIndo = [
+            "januari", "februari", "maret", "april", "mei", "juni",
+            "juli", "agustus", "september", "oktober", "november", "desember"
+        ];
+
+        // 🔹 Fungsi utama filter
         function filterByDate() {
             const selectedDate = dateInput.value;
-
             if (!selectedDate) {
-                // Jika tanggal kosong, tampilkan semua data
                 renderFilteredRows(allRows);
                 return;
             }
 
-            // Konversi format tanggal untuk perbandingan
+            // Konversi format input (YYYY-MM-DD) ke format tabel (contoh: 15 april 2026)
             const [year, month, day] = selectedDate.split('-');
-            const formattedDate = `${day}/${month}/${year}`;
+            const namaBulan = bulanIndo[parseInt(month) - 1];
+            const formattedDate = `${parseInt(day)} ${namaBulan} ${year}`; // tanpa nol di depan
 
-            // Filter baris berdasarkan tanggal
             const filteredRows = allRows.filter(row => {
-                const tanggalCell = row.cells[1].textContent.trim(); // Kolom TANGGAL
+                const tanggalCell = row.cells[2].textContent.trim().toLowerCase();
                 return tanggalCell === formattedDate;
             });
 
             renderFilteredRows(filteredRows);
 
-            // Tampilkan alert jika tidak ada data
             if (filteredRows.length === 0) {
                 alert('Tidak ada data untuk tanggal: ' + formattedDate);
             }
         }
 
-        // 🔹 Fungsi Render Hasil Filter
+        // 🔹 Fungsi untuk menampilkan hasil filter + update nomor urut
         function renderFilteredRows(rows) {
             tableBody.innerHTML = '';
 
             if (rows.length === 0) {
                 tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-gray-500">
-                            Tidak ada data yang ditemukan
-                        </td>
-                    </tr>
-                `;
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-gray-500">
+                        Tidak ada data yang ditemukan
+                    </td>
+                </tr>
+            `;
                 return;
             }
 
-            // Batasi sesuai dengan Show Entries
-            const entriesSelect = document.getElementById('entriesSelect');
-            const limit = entriesSelect ? parseInt(entriesSelect.value) : 10;
-
-            rows.slice(0, limit).forEach(row => {
-                tableBody.appendChild(row.cloneNode(true));
+            rows.forEach((row, index) => {
+                const newRow = row.cloneNode(true);
+                // Update nomor urut di kolom ke-2 (index 1)
+                const noCell = newRow.cells[1];
+                if (noCell) {
+                    noCell.textContent = (index + 1) + '.';
+                }
+                tableBody.appendChild(newRow);
             });
         }
 
-        // 🔹 Event: Saat tanggal berubah
+        // 🔹 Event Listener
         dateInput.addEventListener('change', filterByDate);
-
-        // 🔹 Event: Saat ikon filter diklik
-        filterIcon.addEventListener('click', function() {
+        filterIcon.addEventListener('click', () => {
             filterByDate();
-
-            // Animasi klik pada ikon
-            this.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
+            filterIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => filterIcon.style.transform = 'scale(1)', 200);
         });
-
-        // 🔹 Reset Filter (tombol tambahan - opsional)
-        // Jika ingin tambahkan tombol reset, gunakan kode ini:
-
-        const resetBtn = document.getElementById('resetFilter');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                dateInput.value = '';
-                renderFilteredRows(allRows);
-            });
-        }
-
     });
 </script>
+
 
 <!-- Export Data Absensi Berdasarkan Checkbox -->
 <script>
@@ -1116,8 +1104,6 @@
         });
     });
 </script>
-
-
 
 <!-- Dropdown pindah halaman -->
 <script>
