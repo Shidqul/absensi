@@ -336,8 +336,8 @@
                 <div class="p-6">
                     <div class="flex items-center space-x-4 mb-4">
                         <!-- Filter & Search -->
-                        <input type="date" value="2026-04-26">
-                        <i class="fas fa-filter mb-4" style="color: #666; cursor: pointer;"></i>
+                        <input type="date" id="filterDate" class="mb-2">
+                        <i class="fas fa-filter mb-4" id="filterIcon" style="color: #666; cursor: pointer;"></i>
                         <form class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Masukkan Nama"
                                 aria-label="Search" />
@@ -526,7 +526,6 @@
 </script>
 
 
-
 <!-- Filter Search -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -584,92 +583,124 @@
 </script>
 
 
-
 <!-- Filter Tanggal -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const dateInput = document.querySelector('input[type="date"]');
-        const filterIcon = document.querySelector('.fa-filter');
-        const tableBody = document.querySelector("table tbody");
-        const allRows = Array.from(tableBody.querySelectorAll("tr"));
+        const dateInput = document.getElementById('filterDate');
+        const filterIcon = document.getElementById('filterIcon');
+        const tableBody = document.querySelector("#dataTable tbody");
 
-        // 🔹 Fungsi Filter Berdasarkan Tanggal
-        function filterByDate() {
-            const selectedDate = dateInput.value;
-
-            if (!selectedDate) {
-                // Jika tanggal kosong, tampilkan semua data
-                renderFilteredRows(allRows);
-                return;
-            }
-
-            // Konversi format tanggal untuk perbandingan
-            const [year, month, day] = selectedDate.split('-');
-            const formattedDate = `${day}/${month}/${year}`;
-
-            // Filter baris berdasarkan tanggal
-            const filteredRows = allRows.filter(row => {
-                const tanggalCell = row.cells[2].textContent.trim(); // Kolom TANGGAL
-                return tanggalCell === formattedDate;
-            });
-
-            renderFilteredRows(filteredRows);
-
-            // Tampilkan alert jika tidak ada data
-            if (filteredRows.length === 0) {
-                alert('Tidak ada data untuk tanggal: ' + formattedDate);
-            }
+        if (!dateInput || !filterIcon || !tableBody) {
+            // Kalau salah satu elemen tidak ditemukan, hentikan agar tidak error di console
+            console.warn("Filter: elemen tidak lengkap (filterDate / filterIcon / dataTable tbody).");
+            return;
         }
 
-        // 🔹 Fungsi Render Hasil Filter
-        function renderFilteredRows(rows) {
+        // Simpan snapshot baris awal (original) untuk dikembalikan saat reset
+        const originalRows = Array.from(tableBody.querySelectorAll("tr"));
+
+        const bulanIndo = {
+            'januari': 1,
+            'februari': 2,
+            'maret': 3,
+            'april': 4,
+            'mei': 5,
+            'juni': 6,
+            'juli': 7,
+            'agustus': 8,
+            'september': 9,
+            'oktober': 10,
+            'november': 11,
+            'desember': 12
+        };
+
+        // parse tanggal pada sel tabel ke objek {day, month, year}
+        function parseTableDate(cellText) {
+            // contoh cellText: "02 Mei 2026" atau "2 Mei 2026" (case-insensitive)
+            const parts = cellText.trim().toLowerCase().replace(/\s+/g, ' ').split(' ');
+            if (parts.length < 3) return null;
+            const day = parseInt(parts[0], 10);
+            const monthName = parts[1];
+            const year = parseInt(parts[2], 10);
+            const month = bulanIndo[monthName];
+            if (!day || !month || !year) return null;
+            return {
+                day,
+                month,
+                year
+            };
+        }
+
+        // parse tanggal input (YYYY-MM-DD) ke objek {day, month, year}
+        function parseInputDate(value) {
+            if (!value) return null;
+            const [y, m, d] = value.split('-');
+            return {
+                day: parseInt(d, 10),
+                month: parseInt(m, 10),
+                year: parseInt(y, 10)
+            };
+        }
+
+        function sameDate(a, b) {
+            if (!a || !b) return false;
+            return a.day === b.day && a.month === b.month && a.year === b.year;
+        }
+
+        // Render rows dan update nomor urut (kolom index 1)
+        function renderRows(rows) {
             tableBody.innerHTML = '';
-
-            if (rows.length === 0) {
+            if (!rows || rows.length === 0) {
                 tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-gray-500">
-                            Tidak ada data yang ditemukan
-                        </td>
-                    </tr>
-                `;
+        <tr>
+          <td colspan="7" class="text-center py-4 text-gray-500">Tidak ada data yang ditemukan</td>
+        </tr>`;
                 return;
             }
 
-            // Batasi sesuai dengan Show Entries
-            const entriesSelect = document.getElementById('entriesSelect');
-            const limit = entriesSelect ? parseInt(entriesSelect.value) : 10;
-
-            rows.slice(0, limit).forEach(row => {
-                tableBody.appendChild(row.cloneNode(true));
+            rows.forEach((row, idx) => {
+                const newRow = row.cloneNode(true);
+                const noCell = newRow.cells[1];
+                if (noCell) noCell.textContent = (idx + 1) + (typeof noCell.textContent === 'string' &&
+                    noCell.textContent.includes('.') ? '.' : '');
+                tableBody.appendChild(newRow);
             });
         }
 
-        // 🔹 Event: Saat tanggal berubah
-        dateInput.addEventListener('change', filterByDate);
+        function filterByDate() {
+            const sel = parseInputDate(dateInput.value);
+            if (!sel) {
+                // kosong -> tampilkan semua
+                renderRows(originalRows);
+                return;
+            }
 
-        // 🔹 Event: Saat ikon filter diklik
+            const filtered = originalRows.filter(row => {
+                const cell = row.cells[2]; // kolom TANGGAL (index 2)
+                if (!cell) return false;
+                const parsed = parseTableDate(cell.textContent || cell.innerText || '');
+                return sameDate(parsed, sel);
+            });
+
+            renderRows(filtered);
+
+            if (filtered.length === 0) {
+                const day = ("0" + sel.day).slice(-2) + " / " + sel.month + " / " + sel.year;
+                // alert bisa dihilangkan kalau mengganggu, sekarang tetap menampilkan
+                alert('Tidak ada data untuk tanggal: ' + day);
+            }
+        }
+
+        // event listeners
+        dateInput.addEventListener('change', filterByDate);
         filterIcon.addEventListener('click', function() {
             filterByDate();
-
-            // Animasi klik pada ikon
-            this.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
+            this.style.transform = 'scale(1.15)';
+            setTimeout(() => this.style.transform = 'scale(1)', 150);
         });
 
-        // 🔹 Reset Filter (tombol tambahan - opsional)
-        // Jika ingin tambahkan tombol reset, gunakan kode ini:
-
-        const resetBtn = document.getElementById('resetFilter');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                dateInput.value = '';
-                renderFilteredRows(allRows);
-            });
-        }
-
+        // inisialisasi: tampilkan semua (dengan nomor urut benar)
+        renderRows(originalRows);
     });
 </script>
 
