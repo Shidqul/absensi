@@ -336,7 +336,7 @@
                 <div class="p-6">
                     <div class="flex items-center space-x-4 mb-4">
                         <!-- Filter & Search -->
-                        <input type="date" id="filterDate" class="mb-2">
+                        <input type="text" id="filterDate" placeholder="Pilih rentang tanggal..." readonly>
                         <i class="fas fa-filter mb-4" id="filterIcon" style="color: #666; cursor: pointer;"></i>
                         <form class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Masukkan Nama"
@@ -534,7 +534,9 @@
         const searchInput = document.querySelector('input[type="search"]');
         const showSelect = document.getElementById("show-entries");
 
-        let currentRows = [...rows];
+        // Simpan reference ke semua rows asli
+        window.allTableRows = [...rows];
+        window.currentFilteredRows = [...rows]; // Rows setelah filter tanggal
 
         // 🔹 Render tabel ulang
         function renderTable(data) {
@@ -552,18 +554,24 @@
 
             data.forEach((row, i) => {
                 const clone = row.cloneNode(true);
-                // Kolom nomor urut ada di kolom ke-2 (setelah checkbox)
-                const firstCell = clone.querySelectorAll("td")[1].textContent = i + 1;
-                if (firstCell) firstCell.textContent = i + 1; // update nomor urut
+
+                // Update nomor urut di kolom ke-2
+                const numberCell = clone.querySelector("td:nth-child(2)");
+                if (numberCell) {
+                    numberCell.textContent = (i + 1) + ".";
+                }
+
                 table.appendChild(clone);
             });
         }
 
-        // 🔹 Filter berdasarkan nama (kolom ke-2)
+        // 🔹 Filter berdasarkan nama (kolom ke-4)
         function filterTable() {
             const keyword = searchInput.value.toLowerCase();
-            const filtered = currentRows.filter(row => {
-                const nameCell = row.children[3]; // kolom nama
+
+            // Filter dari currentFilteredRows (hasil filter tanggal)
+            const filtered = window.currentFilteredRows.filter(row => {
+                const nameCell = row.children[3]; // kolom nama (index ke-3)
                 if (!nameCell) return false;
                 return nameCell.textContent.toLowerCase().includes(keyword);
             });
@@ -572,135 +580,129 @@
             renderTable(filtered.slice(0, limit));
         }
 
+        // 🔹 Expose fungsi untuk digunakan filter tanggal
+        window.applySearchFilter = filterTable;
+
         // 🔹 Event listener
         if (showSelect) showSelect.addEventListener("change", filterTable);
         if (searchInput) searchInput.addEventListener("keyup", filterTable);
 
         // 🔹 Render awal
-        const initialLimit = showSelect ? parseInt(showSelect.value) : currentRows.length;
-        renderTable(currentRows.slice(0, initialLimit));
+        const initialLimit = showSelect ? parseInt(showSelect.value) : window.currentFilteredRows.length;
+        renderTable(window.currentFilteredRows.slice(0, initialLimit));
     });
 </script>
 
-
-<!-- Filter Tanggal -->
+<!-- Filter Tanggal dengan Flatpickr Range -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateInput = document.getElementById('filterDate');
         const filterIcon = document.getElementById('filterIcon');
-        const tableBody = document.querySelector("#dataTable tbody");
 
-        if (!dateInput || !filterIcon || !tableBody) {
-            // Kalau salah satu elemen tidak ditemukan, hentikan agar tidak error di console
-            console.warn("Filter: elemen tidak lengkap (filterDate / filterIcon / dataTable tbody).");
-            return;
-        }
+        // Daftar nama bulan dalam bahasa Indonesia
+        const bulanIndo = [
+            "januari", "februari", "maret", "april", "mei", "juni",
+            "juli", "agustus", "september", "oktober", "november", "desember"
+        ];
 
-        // Simpan snapshot baris awal (original) untuk dikembalikan saat reset
-        const originalRows = Array.from(tableBody.querySelectorAll("tr"));
-
-        const bulanIndo = {
-            'januari': 1,
-            'februari': 2,
-            'maret': 3,
-            'april': 4,
-            'mei': 5,
-            'juni': 6,
-            'juli': 7,
-            'agustus': 8,
-            'september': 9,
-            'oktober': 10,
-            'november': 11,
-            'desember': 12
-        };
-
-        // parse tanggal pada sel tabel ke objek {day, month, year}
-        function parseTableDate(cellText) {
-            // contoh cellText: "02 Mei 2026" atau "2 Mei 2026" (case-insensitive)
-            const parts = cellText.trim().toLowerCase().replace(/\s+/g, ' ').split(' ');
-            if (parts.length < 3) return null;
-            const day = parseInt(parts[0], 10);
-            const monthName = parts[1];
-            const year = parseInt(parts[2], 10);
-            const month = bulanIndo[monthName];
-            if (!day || !month || !year) return null;
-            return {
-                day,
-                month,
-                year
-            };
-        }
-
-        // parse tanggal input (YYYY-MM-DD) ke objek {day, month, year}
-        function parseInputDate(value) {
-            if (!value) return null;
-            const [y, m, d] = value.split('-');
-            return {
-                day: parseInt(d, 10),
-                month: parseInt(m, 10),
-                year: parseInt(y, 10)
-            };
-        }
-
-        function sameDate(a, b) {
-            if (!a || !b) return false;
-            return a.day === b.day && a.month === b.month && a.year === b.year;
-        }
-
-        // Render rows dan update nomor urut (kolom index 1)
-        function renderRows(rows) {
-            tableBody.innerHTML = '';
-            if (!rows || rows.length === 0) {
-                tableBody.innerHTML = `
-        <tr>
-          <td colspan="7" class="text-center py-4 text-gray-500">Tidak ada data yang ditemukan</td>
-        </tr>`;
-                return;
+        // 🔹 Inisialisasi Flatpickr dengan mode RANGE
+        const flatpickrInstance = flatpickr(dateInput, {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: false,
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                },
+                rangeSeparator: ' sampai '
+            },
+            onClose: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    filterByDateRange(selectedDates);
+                } else if (selectedDates.length === 0) {
+                    // Reset filter tanggal
+                    resetDateFilter();
+                }
             }
-
-            rows.forEach((row, idx) => {
-                const newRow = row.cloneNode(true);
-                const noCell = newRow.cells[1];
-                if (noCell) noCell.textContent = (idx + 1) + (typeof noCell.textContent === 'string' &&
-                    noCell.textContent.includes('.') ? '.' : '');
-                tableBody.appendChild(newRow);
-            });
-        }
-
-        function filterByDate() {
-            const sel = parseInputDate(dateInput.value);
-            if (!sel) {
-                // kosong -> tampilkan semua
-                renderRows(originalRows);
-                return;
-            }
-
-            const filtered = originalRows.filter(row => {
-                const cell = row.cells[2]; // kolom TANGGAL (index 2)
-                if (!cell) return false;
-                const parsed = parseTableDate(cell.textContent || cell.innerText || '');
-                return sameDate(parsed, sel);
-            });
-
-            renderRows(filtered);
-
-            if (filtered.length === 0) {
-                const day = ("0" + sel.day).slice(-2) + " / " + sel.month + " / " + sel.year;
-                // alert bisa dihilangkan kalau mengganggu, sekarang tetap menampilkan
-                alert('Tidak ada data untuk tanggal: ' + day);
-            }
-        }
-
-        // event listeners
-        dateInput.addEventListener('change', filterByDate);
-        filterIcon.addEventListener('click', function() {
-            filterByDate();
-            this.style.transform = 'scale(1.15)';
-            setTimeout(() => this.style.transform = 'scale(1)', 150);
         });
 
-        // inisialisasi: tampilkan semua (dengan nomor urut benar)
-        renderRows(originalRows);
+        // 🔹 Fungsi konversi string tanggal tabel ke Date object
+        function parseTableDate(dateString) {
+            const parts = dateString.toLowerCase().trim().split(' ');
+
+            if (parts.length !== 3) return null;
+
+            const day = parseInt(parts[0]);
+            const monthIndex = bulanIndo.indexOf(parts[1]);
+            const year = parseInt(parts[2]);
+
+            if (monthIndex === -1 || isNaN(day) || isNaN(year)) return null;
+
+            return new Date(year, monthIndex, day);
+        }
+
+        // 🔹 Fungsi utama filter rentang tanggal
+        function filterByDateRange(selectedDates) {
+            const startDate = new Date(selectedDates[0]);
+            const endDate = new Date(selectedDates[1]);
+
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+
+            // Filter dari allTableRows (semua data asli)
+            const filteredRows = window.allTableRows.filter(row => {
+                const tanggalCell = row.cells[2].textContent.trim();
+                const rowDate = parseTableDate(tanggalCell);
+
+                if (!rowDate) return false;
+
+                return rowDate >= startDate && rowDate <= endDate;
+            });
+
+            // Update currentFilteredRows untuk filter search
+            window.currentFilteredRows = filteredRows;
+
+            // Terapkan juga filter search yang sedang aktif
+            if (window.applySearchFilter) {
+                window.applySearchFilter();
+            }
+
+            if (filteredRows.length === 0) {
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                const startStr = startDate.toLocaleDateString('id-ID', options);
+                const endStr = endDate.toLocaleDateString('id-ID', options);
+                alert(`Tidak ada data dari ${startStr} sampai ${endStr}`);
+            }
+        }
+
+        // 🔹 Reset filter tanggal
+        function resetDateFilter() {
+            window.currentFilteredRows = [...window.allTableRows];
+            if (window.applySearchFilter) {
+                window.applySearchFilter();
+            }
+        }
+
+        // 🔹 Event Listener untuk icon filter
+        filterIcon.addEventListener('click', () => {
+            flatpickrInstance.open();
+            filterIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => filterIcon.style.transform = 'scale(1)', 200);
+        });
     });
 </script>
 
@@ -1062,15 +1064,13 @@
         const tableBody = document.querySelector("#dataTable tbody");
         let currentRow = null;
 
-        // ✅ Inisialisasi Flatpickr LANGSUNG di sini (disesuaikan dari script kedua, tanpa altInput untuk kesederhanaan)
+        // ✅ Inisialisasi Flatpickr tanpa mode range (single date)
         const flatpickrInstance = flatpickr("#editTanggal", {
-            mode: "range",
             dateFormat: "d F Y",
             allowInput: true,
             clickOpens: true,
             locale: {
                 firstDayOfWeek: 1,
-                rangeSeparator: ' - ',
                 weekdays: {
                     shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
                     longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
@@ -1091,89 +1091,50 @@
 
         // ✅ Event delegation untuk tombol Edit dengan class btn-success
         tableBody.addEventListener("click", function(e) {
-            // Cari tombol dengan class btn-success (bisa klik button atau icon di dalamnya)
             const button = e.target.closest(".btn-success");
             if (!button) return;
 
             currentRow = button.closest("tr");
 
-            // Ambil data dari kolom tabel (disesuaikan untuk tabel tanpa subjek: nth-child(3) tanggal, (4) nama, (5) deskripsi)
+            // Ambil data dari kolom tabel
             const tanggal = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
             const nama = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
 
-            // Ambil deskripsi dan bersihkan whitespace berlebih (metode agresif dari script kedua)
+            // Ambil deskripsi dan bersihkan whitespace berlebih
             const deskripsiCell = currentRow.querySelector("td:nth-child(5)");
             let deskripsi = deskripsiCell?.innerText || deskripsiCell?.textContent || "";
             deskripsi = deskripsi
-                .split(/\s+/) // Split by any whitespace
-                .filter(word => word) // Remove empty strings
-                .join(' '); // Join with single space
+                .split(/\s+/)
+                .filter(word => word)
+                .join(' ');
 
-            // Isi nilai ke form modal (tanpa subjek)
+            // Isi nilai ke form modal
             document.getElementById("editNama").value = nama;
             document.getElementById("editDeskripsi").value = deskripsi;
 
-            // ✅ Set nilai Flatpickr dengan parsing tanggal yang lebih robust dari script kedua
-            if (tanggal && tanggal.includes(' - ')) {
-                const dates = tanggal.split(' - ').map(d => d.trim());
-
+            // ✅ Set nilai Flatpickr untuk single date
+            if (tanggal) {
                 // Parse tanggal Indonesia ke Date object
                 function parseIndonesianDate(dateStr) {
                     const months = {
-                        'Januari': 0,
-                        'Februari': 1,
-                        'Maret': 2,
-                        'April': 3,
-                        'Mei': 4,
-                        'Juni': 5,
-                        'Juli': 6,
-                        'Agustus': 7,
-                        'September': 8,
-                        'Oktober': 9,
-                        'November': 10,
-                        'Desember': 11
+                        'januari': 0,
+                        'februari': 1,
+                        'maret': 2,
+                        'april': 3,
+                        'mei': 4,
+                        'juni': 5,
+                        'juli': 6,
+                        'agustus': 7,
+                        'september': 8,
+                        'oktober': 9,
+                        'november': 10,
+                        'desember': 11
                     };
 
-                    const parts = dateStr.split(' ');
+                    const parts = dateStr.toLowerCase().split(' ');
                     if (parts.length === 3) {
                         const day = parseInt(parts[0]);
                         const month = months[parts[1]];
-                        const year = parseInt(parts[2]);
-                        return new Date(year, month, day);
-                    }
-                    return null;
-                }
-
-                const startDate = parseIndonesianDate(dates[0]);
-                const endDate = parseIndonesianDate(dates[1]);
-
-                if (startDate && endDate) {
-                    flatpickrInstance.setDate([startDate, endDate], true);
-                }
-            } else if (tanggal) {
-                // Jika tanggal tunggal (bukan range) - fitur tambahan dari script kedua
-                function parseIndonesianDate(dateStr) {
-                    const months = {
-                        'Januari': 0,
-                        'Februari': 1,
-                        'Maret': 2,
-                        'April': 3,
-                        'Mei': 4,
-                        'Juni': 5,
-                        'Juli': 6,
-                        'Agustus': 7,
-                        'September': 8,
-                        'Oktober': 9,
-                        'November': 10,
-                        'Desember': 11
-                    };
-
-                    // Format: "27 april 2026" atau "29 april 2026"
-                    const parts = dateStr.split(' ');
-                    if (parts.length === 3) {
-                        const day = parseInt(parts[0]);
-                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
-                            .toLowerCase()];
                         const year = parseInt(parts[2]);
                         if (month !== undefined) {
                             return new Date(year, month, day);
@@ -1206,10 +1167,10 @@
             e.preventDefault();
 
             if (currentRow) {
-                // ✅ Ambil nilai tanggal dari Flatpickr instance, bukan dari input langsung (dari script kedua)
+                // ✅ Ambil nilai tanggal dari Flatpickr instance
                 const tanggalValue = flatpickrInstance.input.value.trim();
 
-                // Update data di tabel (disesuaikan untuk tabel tanpa subjek: nth-child(3) tanggal, (4) nama, (5) deskripsi)
+                // Update data di tabel
                 if (tanggalValue) {
                     currentRow.querySelector("td:nth-child(3)").textContent = tanggalValue;
                 }
