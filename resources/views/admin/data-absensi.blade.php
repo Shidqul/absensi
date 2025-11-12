@@ -243,55 +243,6 @@
     </style>
 </head>
 
-<!-- Modal Edit Peserta -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50">
-    <div class="flex items-center justify-center h-full">
-        <div class="bg-white rounded-xl shadow-lg w-[750px] p-8 relative">
-            <h2 class="text-2xl font-semibold mb-6">Edit Laporan Magang</h2>
-
-            <form id="editForm" class="grid grid-cols-2 gap-4" enctype="multipart/form-data">
-                <!-- Tanggal -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Tanggal</label>
-                    <input type="text" id="editTanggal" class="w-full border rounded-md px-3 py-2"
-                        placeholder="Pilih tanggal..." />
-                </div>
-                <!-- Nama Lengkap -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" id="editNama" class="w-full border rounded-md px-3 py-2" />
-                </div>
-                <!-- Jam Masuk -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Jam Masuk</label>
-                    <input type="text" id="editMasuk" class="w-full border rounded-md px-3 py-2"
-                        placeholder="Pilih Jam Masuk..." />
-                </div>
-                <!-- Jam Pulang -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Jam Pulang</label>
-                    <input type="text" id="editPulang" class="w-full border rounded-md px-3 py-2"
-                        placeholder="Pilih Jam Pulang..." />
-                </div>
-                <!-- Keterangan -->
-                <div>
-                    <label class="block text-gray-700 mb-1">Keterangan</label>
-                    <select id="editKeterangan"
-                        class="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
-                        <option value="">Pilih Ketrangan</option>
-                        <option value="TEPAT WAKTU">TEPAT WAKTU</option>
-                        <option value="TELAT">TELAT</option>
-                    </select>
-                </div>
-                <!-- Tombol Aksi -->
-                <div class="col-span-2 flex justify-end mt-6">
-                    <button type="button" id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded-md mr-2">Batal</button>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <body class="bg-background-light dark:bg-background-dark font-display">
     <div class="flex h-screen">
@@ -376,7 +327,7 @@
                                 </select>
                             </a>
                             <!-- Filter & Search -->
-                            <input type="date" id="filterDate">
+                            <input type="text" id="filterDate" placeholder="Pilih rentang tanggal..." readonly>
                             <i class="fas fa-filter mb-4" id="filterIcon" style="color: #666; cursor: pointer;"></i>
                             <form class="d-flex" role="search">
                                 <input class="form-control me-2" type="search" placeholder="Masukkan Nama"
@@ -446,20 +397,6 @@
                                     <td><span class="status-badge status-tepat">TEPAT WAKTU</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
-                                            <!-- Tombol Edit -->
-                                            <button type="button" class="btn btn-success">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
-                                                    </path>
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
-                                                    </path>
-                                                </svg>
-                                            </button>
-
                                             <!-- Tombol discard -->
                                             <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -482,20 +419,6 @@
                                     <td><span class="status-badge status-tepat">TEPAT WAKTU</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
-                                            <!-- Tombol Edit -->
-                                            <button type="button" class="btn btn-success">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
-                                                    </path>
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
-                                                    </path>
-                                                </svg>
-                                            </button>
-
                                             <!-- Tombol discard -->
                                             <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -518,20 +441,28 @@
                                     <td><span class="status-badge status-terlambat">TELAT</span></td>
                                     <td>
                                         <div class="action-buttons d-flex gap-2">
-                                            <!-- Tombol Edit -->
-                                            <button type="button" class="btn btn-success">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square me-1"
-                                                    viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
-                                                    </path>
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
-                                                    </path>
+                                            <!-- Tombol discard -->
+                                            <button type="button" class="btn btn-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M14 11v6m-4-6v6M6 7v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7M4 7h16M7 7l2-4h6l2 4" />
                                                 </svg>
                                             </button>
-
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkbox row-checkbox"></td>
+                                    <td>4.</td>
+                                    <td>16 mei 2026</td>
+                                    <td>Ade Setiawan</td>
+                                    <td>07:34:22</td>
+                                    <td>17:06:15</td>
+                                    <td><span class="status-badge status-tepat">TEPAT WAKTU</span></td>
+                                    <td>
+                                        <div class="action-buttons d-flex gap-2">
                                             <!-- Tombol discard -->
                                             <button type="button" class="btn btn-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -574,7 +505,9 @@
         const searchInput = document.querySelector('input[type="search"]');
         const showSelect = document.getElementById("show-entries");
 
-        let currentRows = [...rows];
+        // Simpan reference ke semua rows asli
+        window.allTableRows = [...rows];
+        window.currentFilteredRows = [...rows]; // Rows setelah filter tanggal
 
         // 🔹 Render tabel ulang
         function renderTable(data) {
@@ -593,7 +526,7 @@
             data.forEach((row, i) => {
                 const clone = row.cloneNode(true);
 
-                // Update nomor urut di kolom ke-2 (bukan kolom pertama yang berisi checkbox)
+                // Update nomor urut di kolom ke-2
                 const numberCell = clone.querySelector("td:nth-child(2)");
                 if (numberCell) {
                     numberCell.textContent = (i + 1) + ".";
@@ -606,7 +539,9 @@
         // 🔹 Filter berdasarkan nama (kolom ke-4)
         function filterTable() {
             const keyword = searchInput.value.toLowerCase();
-            const filtered = currentRows.filter(row => {
+
+            // Filter dari currentFilteredRows (hasil filter tanggal)
+            const filtered = window.currentFilteredRows.filter(row => {
                 const nameCell = row.children[3]; // kolom nama (index ke-3)
                 if (!nameCell) return false;
                 return nameCell.textContent.toLowerCase().includes(keyword);
@@ -616,91 +551,131 @@
             renderTable(filtered.slice(0, limit));
         }
 
+        // 🔹 Expose fungsi untuk digunakan filter tanggal
+        window.applySearchFilter = filterTable;
+
         // 🔹 Event listener
         if (showSelect) showSelect.addEventListener("change", filterTable);
         if (searchInput) searchInput.addEventListener("keyup", filterTable);
 
         // 🔹 Render awal
-        const initialLimit = showSelect ? parseInt(showSelect.value) : currentRows.length;
-        renderTable(currentRows.slice(0, initialLimit));
+        const initialLimit = showSelect ? parseInt(showSelect.value) : window.currentFilteredRows.length;
+        renderTable(window.currentFilteredRows.slice(0, initialLimit));
     });
 </script>
 
-<!-- Filter Tanggal -->
+<!-- Filter Tanggal dengan Flatpickr Range -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const dateInput = document.getElementById('filterDate');
         const filterIcon = document.getElementById('filterIcon');
-        const tableBody = document.querySelector("#dataTable tbody");
-        const allRows = Array.from(tableBody.querySelectorAll("tr"));
 
-        // Daftar nama bulan dalam bahasa Indonesia (huruf kecil agar mudah dibandingkan)
+        // Daftar nama bulan dalam bahasa Indonesia
         const bulanIndo = [
             "januari", "februari", "maret", "april", "mei", "juni",
             "juli", "agustus", "september", "oktober", "november", "desember"
         ];
 
-        // 🔹 Fungsi utama filter
-        function filterByDate() {
-            const selectedDate = dateInput.value;
-            if (!selectedDate) {
-                renderFilteredRows(allRows);
-                return;
+        // 🔹 Inisialisasi Flatpickr dengan mode RANGE
+        const flatpickrInstance = flatpickr(dateInput, {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: false,
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt',
+                        'Nov', 'Des'
+                    ],
+                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ]
+                },
+                rangeSeparator: ' sampai '
+            },
+            onClose: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    filterByDateRange(selectedDates);
+                } else if (selectedDates.length === 0) {
+                    // Reset filter tanggal
+                    resetDateFilter();
+                }
             }
+        });
 
-            // Konversi format input (YYYY-MM-DD) ke format tabel (contoh: 15 april 2026)
-            const [year, month, day] = selectedDate.split('-');
-            const namaBulan = bulanIndo[parseInt(month) - 1];
-            const formattedDate = `${parseInt(day)} ${namaBulan} ${year}`; // tanpa nol di depan
+        // 🔹 Fungsi konversi string tanggal tabel ke Date object
+        function parseTableDate(dateString) {
+            const parts = dateString.toLowerCase().trim().split(' ');
 
-            const filteredRows = allRows.filter(row => {
-                const tanggalCell = row.cells[2].textContent.trim().toLowerCase();
-                return tanggalCell === formattedDate;
+            if (parts.length !== 3) return null;
+
+            const day = parseInt(parts[0]);
+            const monthIndex = bulanIndo.indexOf(parts[1]);
+            const year = parseInt(parts[2]);
+
+            if (monthIndex === -1 || isNaN(day) || isNaN(year)) return null;
+
+            return new Date(year, monthIndex, day);
+        }
+
+        // 🔹 Fungsi utama filter rentang tanggal
+        function filterByDateRange(selectedDates) {
+            const startDate = new Date(selectedDates[0]);
+            const endDate = new Date(selectedDates[1]);
+
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+
+            // Filter dari allTableRows (semua data asli)
+            const filteredRows = window.allTableRows.filter(row => {
+                const tanggalCell = row.cells[2].textContent.trim();
+                const rowDate = parseTableDate(tanggalCell);
+
+                if (!rowDate) return false;
+
+                return rowDate >= startDate && rowDate <= endDate;
             });
 
-            renderFilteredRows(filteredRows);
+            // Update currentFilteredRows untuk filter search
+            window.currentFilteredRows = filteredRows;
+
+            // Terapkan juga filter search yang sedang aktif
+            if (window.applySearchFilter) {
+                window.applySearchFilter();
+            }
 
             if (filteredRows.length === 0) {
-                alert('Tidak ada data untuk tanggal: ' + formattedDate);
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                const startStr = startDate.toLocaleDateString('id-ID', options);
+                const endStr = endDate.toLocaleDateString('id-ID', options);
+                alert(`Tidak ada data dari ${startStr} sampai ${endStr}`);
             }
         }
 
-        // 🔹 Fungsi untuk menampilkan hasil filter + update nomor urut
-        function renderFilteredRows(rows) {
-            tableBody.innerHTML = '';
-
-            if (rows.length === 0) {
-                tableBody.innerHTML = `
-                <tr>
-                    <td colspan="8" class="text-center py-4 text-gray-500">
-                        Tidak ada data yang ditemukan
-                    </td>
-                </tr>
-            `;
-                return;
+        // 🔹 Reset filter tanggal
+        function resetDateFilter() {
+            window.currentFilteredRows = [...window.allTableRows];
+            if (window.applySearchFilter) {
+                window.applySearchFilter();
             }
-
-            rows.forEach((row, index) => {
-                const newRow = row.cloneNode(true);
-                // Update nomor urut di kolom ke-2 (index 1)
-                const noCell = newRow.cells[1];
-                if (noCell) {
-                    noCell.textContent = (index + 1) + '.';
-                }
-                tableBody.appendChild(newRow);
-            });
         }
 
-        // 🔹 Event Listener
-        dateInput.addEventListener('change', filterByDate);
+        // 🔹 Event Listener untuk icon filter
         filterIcon.addEventListener('click', () => {
-            filterByDate();
+            flatpickrInstance.open();
             filterIcon.style.transform = 'scale(1.2)';
             setTimeout(() => filterIcon.style.transform = 'scale(1)', 200);
         });
     });
 </script>
-
 
 <!-- Export Data Absensi Berdasarkan Checkbox -->
 <script>
@@ -954,156 +929,6 @@
     }
 </script>
 
-<!-- Button Edit -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const modal = document.getElementById("editModal");
-        const cancelBtn = document.getElementById("cancelEdit");
-        const form = document.getElementById("editForm");
-        const tableBody = document.querySelector("#dataTable tbody");
-        const keteranganSelect = document.getElementById("editKeterangan");
-        let currentRow = null;
-
-        // ✅ Inisialisasi Flatpickr
-        const tanggalPicker = flatpickr("#editTanggal", {
-            dateFormat: "d F Y",
-            allowInput: true,
-            clickOpens: true,
-            locale: {
-                firstDayOfWeek: 1,
-                weekdays: {
-                    shorthand: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
-                    longhand: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
-                },
-                months: {
-                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt',
-                        'Nov', 'Des'
-                    ],
-                    longhand: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                        'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                    ]
-                }
-            },
-            onReady: function(_, __, instance) {
-                instance.input.placeholder = "Pilih tanggal absensi";
-            }
-        });
-
-        const jamMasukPicker = flatpickr("#editMasuk", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i:S",
-            time_24hr: true
-        });
-
-        const jamPulangPicker = flatpickr("#editPulang", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i:S",
-            time_24hr: true
-        });
-
-        // ✅ Event delegation untuk tombol Edit
-        tableBody.addEventListener("click", function(e) {
-            const button = e.target.closest(".btn-success");
-            if (!button) return;
-
-            currentRow = button.closest("tr");
-
-            // Ambil data dari kolom tabel
-            const tanggal = currentRow.querySelector("td:nth-child(3)")?.textContent.trim() || "";
-            const nama = currentRow.querySelector("td:nth-child(4)")?.textContent.trim() || "";
-            const jamMasuk = currentRow.querySelector("td:nth-child(5)")?.textContent.trim() || "";
-            const jamPulang = currentRow.querySelector("td:nth-child(6)")?.textContent.trim() || "";
-            const keterangan = currentRow.querySelector("td:nth-child(7)")?.textContent.trim() || "";
-
-            // Isi form
-            document.getElementById("editNama").value = nama;
-            document.getElementById("editMasuk").value = jamMasuk;
-            document.getElementById("editPulang").value = jamPulang;
-            document.getElementById("editKeterangan").value = keterangan;
-
-            // ✅ Set tanggal ke Flatpickr
-            if (tanggal) {
-                function parseIndoDate(dateStr) {
-                    const months = {
-                        'Januari': 0,
-                        'Februari': 1,
-                        'Maret': 2,
-                        'April': 3,
-                        'Mei': 4,
-                        'Juni': 5,
-                        'Juli': 6,
-                        'Agustus': 7,
-                        'September': 8,
-                        'Oktober': 9,
-                        'November': 10,
-                        'Desember': 11
-                    };
-                    const parts = dateStr.split(' ');
-                    if (parts.length === 3) {
-                        const day = parseInt(parts[0]);
-                        const month = months[parts[1].charAt(0).toUpperCase() + parts[1].slice(1)
-                            .toLowerCase()];
-                        const year = parseInt(parts[2]);
-                        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                            return new Date(year, month, day);
-                        }
-                    }
-                    return null;
-                }
-                const dateObj = parseIndoDate(tanggal);
-                if (dateObj) tanggalPicker.setDate(dateObj, true);
-            } else {
-                tanggalPicker.clear();
-            }
-
-            modal.classList.remove("hidden");
-        });
-
-        // ✅ Tombol Batal
-        cancelBtn.addEventListener("click", () => {
-            modal.classList.add("hidden");
-            form.reset();
-            tanggalPicker.clear();
-            currentRow = null;
-        });
-
-        // ✅ Submit form untuk update data tabel
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            if (currentRow) {
-                const tanggalValue = tanggalPicker.input.value.trim();
-                const namaValue = document.getElementById("editNama").value.trim();
-                const masukValue = document.getElementById("editMasuk").value.trim();
-                const pulangValue = document.getElementById("editPulang").value.trim();
-                const ketValue = document.getElementById("editKeterangan").value.trim();
-
-                // Update tabel
-                if (tanggalValue) currentRow.querySelector("td:nth-child(3)").textContent =
-                    tanggalValue;
-                currentRow.querySelector("td:nth-child(4)").textContent = namaValue;
-                currentRow.querySelector("td:nth-child(5)").textContent = masukValue;
-                currentRow.querySelector("td:nth-child(6)").textContent = pulangValue;
-                currentRow.querySelector("td:nth-child(7)").textContent = ketValue;
-
-                // Log untuk debug
-                const formData = new FormData(form);
-                console.log("Data diperbarui:");
-                for (let [key, val] of formData.entries()) {
-                    console.log(`${key}: ${val}`);
-                }
-
-                alert("Perubahan disimpan! (Data berhasil diperbarui)");
-            }
-
-            modal.classList.add("hidden");
-            form.reset();
-            tanggalPicker.clear();
-            currentRow = null;
-        });
-    });
-</script>
 
 <!-- Dropdown pindah halaman -->
 <script>
