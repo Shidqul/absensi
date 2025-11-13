@@ -337,35 +337,38 @@
                             </form>
                         </div>
                     </div>
-                    <!-- Show Entries -->
-                    <div class="flex items-center mb-4">
-                        <span class="mr-2 text-gray-700 dark:text-gray-300">Show</span>
-                        <select id="showEntries"
-                            class="border rounded-md px-8 py-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                        </select>
-                        <span class="ml-2 text-gray-700 dark:text-gray-300">entries</span>
-                    </div>
+                    <!-- Container untuk Show Entries dan Export Data -->
+                    <div class="flex items-center justify-between mb-4">
+                        <!-- Show Entries -->
+                        <div class="flex items-center">
+                            <span class="mr-2 text-gray-700 dark:text-gray-300">Show</span>
+                            <select id="showEntries"
+                                class="border rounded-md px-8 py-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span class="ml-2 text-gray-700 dark:text-gray-300">entries</span>
+                        </div>
 
-                    <!-- Export Data -->
-                    <div class="export-container">
-                        <div style="position: relative;">
-                            <button id="exportBtn"
-                                class="bg-indigo-900 text-white px-5 py-2 rounded-md hover:bg-indigo-800 flex items-center space-x-2">
-                                <span class="material-icons text-sm">download</span>
-                                <span>Export Data</span>
-                                <span class="material-icons text-sm">expand_more</span>
-                            </button>
-                            <div class="export-dropdown" id="exportDropdown">
-                                <div class="export-option" onclick="exportToExcel()">
-                                    <span class="material-icons text-sm align-middle mr-2">table_chart</span>
-                                    Export Data ke Excel
-                                </div>
-                                <div class="export-option" onclick="exportToPDF()">
-                                    <span class="material-icons text-sm align-middle mr-2">picture_as_pdf</span>
-                                    Export Data ke PDF
+                        <!-- Export Data -->
+                        <div class="export-container">
+                            <div style="position: relative;">
+                                <button id="exportBtn"
+                                    class="bg-indigo-900 text-white px-5 py-2 rounded-md hover:bg-indigo-800 flex items-center space-x-2">
+                                    <span class="material-icons text-sm">download</span>
+                                    <span>Export Data</span>
+                                    <span class="material-icons text-sm">expand_more</span>
+                                </button>
+                                <div class="export-dropdown" id="exportDropdown">
+                                    <div class="export-option" onclick="exportToExcel()">
+                                        <span class="material-icons text-sm align-middle mr-2">table_chart</span>
+                                        Export Data ke Excel
+                                    </div>
+                                    <div class="export-option" onclick="exportToPDF()">
+                                        <span class="material-icons text-sm align-middle mr-2">picture_as_pdf</span>
+                                        Export Data ke PDF
+                                    </div>
                                 </div>
                             </div>
                         </div>
