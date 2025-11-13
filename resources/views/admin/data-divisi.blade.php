@@ -372,30 +372,31 @@
                         </form>
                     </div>
 
-                    <!-- Show Entries -->
-                    <div class="flex items-center mb-6 text-sm text-gray-700 dark:text-gray-200">
-                        <label class="mr-3" for="show-entries">Show</label>
-                        <select
-                            class="border rounded-md px-8 py-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            id="show-entries">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                        </select>
-                        <span class="ml-2">entries</span>
-                    </div>
+                    <!-- Container untuk Show Entries dan Export Data -->
+                    <div class="flex items-center justify-between mb-4">
+                        <!-- Show Entries -->
+                        <div class="flex items-center">
+                            <span class="mr-2 text-gray-700 dark:text-gray-300">Show</span>
+                            <select id="showEntries"
+                                class="border rounded-md px-8 py-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span class="ml-2 text-gray-700 dark:text-gray-300">entries</span>
+                        </div>
 
-                    <div class="export-container">
-                        <!-- Tombol tambah -->
                         <div class="export-container">
-                            <button id="btnTambah"
-                                class="flex items-center gap-2 bg-[#4a58ad] text-white px-4 py-2 rounded-md hover:bg-[#3a4793] transition">
-                                <i class="material-icons text-white text-base">add</i>
-                                Tambah
-                            </button>
+                            <!-- Tombol tambah -->
+                            <div class="export-container">
+                                <button id="btnTambah"
+                                    class="flex items-center gap-2 bg-[#4a58ad] text-white px-4 py-2 rounded-md hover:bg-[#3a4793] transition">
+                                    <i class="material-icons text-white text-base">add</i>
+                                    Tambah
+                                </button>
+                            </div>
                         </div>
                     </div>
-
 
                     <!-- Table -->
                     <div class="overflow-x-auto">
